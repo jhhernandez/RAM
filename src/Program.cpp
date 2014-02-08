@@ -68,4 +68,5 @@ Program::Symbol Program::lexer(const char* cstr) {
 	regex label("^\\s*[_a-zA-Z]\\w*\\s*:");
 	regex instruction("READ|WRITE|LOAD|STORE|ADD|SUB|DIV|MULT|HALT|JUMP|JGTZ|JZERO");
 	regex comment("\\s*:\\w*\\s*$");
+	regex operand("");
 }
