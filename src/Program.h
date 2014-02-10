@@ -20,32 +20,31 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
+#include <string>
+#include <vector>
+#include <stdint.h>
+
 class Program {
-private:
-	typedef enum {
-		NTS_S = 0,
-		NTS_A,
-		NTS_B,
-		NTS_C,
-		NTS_D,
-		NTS_E,
-		TS_LABEL,
-		TS_INS,
-		TS_OPER,
-		TS_COMMENT,
-		TS_EOS
-	} Symbol;
-	/**
-	 * \fn CCTOR
-	 */
-	Program(const Program& other);
-	/**
-	 * \fn CCTOR
-	 */
-	Program& operator=(const Program& other);
-	Program::Symbol lexer(const char*);
-	int parser();
 public:
+	typedef enum {
+	        NONE = -1,
+	        NTS_S = 0,
+	        NTS_INST,
+	        NTS_MARKER_INST,
+	        NTS_MARKER_COMMENT,
+	        NTS_INST_COMMENT,
+	        NTS_MARKER_INST_COMMENT,
+		NTS_OPERAND,
+		TS_MARKER,
+	        TS_LABEL,
+		TS_COMMENT,
+	        TS_INST_0,
+	        TS_INST_1_LAB,
+	        TS_INST_1_OP,
+	        TS_OP_IMM,
+	        TS_OP_DIRECT,
+	        TS_OP_INDIRECT,
+	} Symbol;
 	/**
 	 * \fn CTOR
 	 */
@@ -59,7 +58,20 @@ public:
 	 * \param file Ruta del archivo a leer
 	 * \return Devuelve 0 en caso de lectura exitosa
 	 */
-	int readFile(const char*);
+	int32_t readFile(const char*);
+	static const std::string symToString(Symbol);
+private:
+	/**
+	 * \fn CCTOR
+	 */
+	Program(const Program& other);
+	/**
+	 * \fn CCTOR
+	 */
+	Program& operator=(const Program& other);
+	const std::vector<std::string> tokenize(const std::string&);
+	Program::Symbol lexer(const std::string&);
+	int32_t LLparser(const std::vector<std::vector<std::string> >&);
 };
 
 #endif // PROGRAM_H

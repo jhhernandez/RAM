@@ -1,0 +1,7 @@
+caca:
+LOAD 2		;Carga el registro 2 en acum
+ADD =3		;Suma 3
+MULT 2		;Multiplica por registro 2
+MULT =4		; Multiplica por 4
+STORE 1		; Guarda en registro 1
+; comment

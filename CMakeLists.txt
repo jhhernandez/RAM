@@ -1,11 +1,24 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required (VERSION 2.8)
 
-project(ram)
+project (ram)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -g")
+set (CMAKE_BUILD_TYPE DEBUG)
 
-add_subdirectory(src)
+add_subdirectory (src)
 
-add_executable(ram src/ParserException.cpp src/Program.cpp src/main.cpp)
+find_package (Boost REQUIRED)
+
+if (Boost_FOUND)
+	include_directories (${Boost_INCLUDE_DIRS})
+	set (BOOST_REGEX_LIB ${Boost_LIBRARY_DIRS}/x86_64-linux-gnu/libboost_regex.so)
+endif (Boost_FOUND)
+
+add_executable (ram main.cpp)
+
+target_link_libraries (
+	ram
+	${BOOST_REGEX_LIB}
+	Program
+)
 
 install(TARGETS ram RUNTIME DESTINATION bin)
