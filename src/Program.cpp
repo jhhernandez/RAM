@@ -37,8 +37,8 @@ Program::~Program() {
 
 }
 
-const vector<string> Program::tokenize(const string& str)  {
-	vector<string> tokens;
+const vector<pair<string, Program::Symbol> > Program::tokenize(const string& str)  {
+	vector<pair<string, Symbol> > tokens;
 	int32_t wspos;
 	int32_t word_end;
 
@@ -46,20 +46,23 @@ const vector<string> Program::tokenize(const string& str)  {
 		wspos = str.find_first_not_of(" ", i);
 
 		if (str[wspos] == ';') {
-			tokens.push_back(str.substr(i, str.size() - i));
+			tokens.push_back(pair<string, Symbol>(str.substr(i, str.size() - i), TS_COMMENT));
 			break;
 		}
 
 		word_end = str.find_first_of(" ", wspos);
-		tokens.push_back(str.substr(wspos, word_end - wspos));
+		tokens.push_back(
+		        pair<string, Symbol>(
+		                str.substr(wspos, word_end - wspos),
+		                lexer(str.substr(wspos, word_end - wspos))));
 		i = word_end;
 	}
 
 	return tokens;
 }
 
-int32_t Program::LLparser(const vector<vector<string> >& strings) {
-	/* NTS TS Rule*/
+int32_t Program::LLparser() {
+	/* LH RH Rule*/
 	map<Symbol, map<Symbol, int32_t> > table;
 	stack<Symbol> symStack;
 	Symbol currSym;
@@ -94,28 +97,28 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 	table[NTS_INST][TS_OP_INDIRECT] = 10;
 	table[NTS_OPERAND][TS_OP_INDIRECT] = 13;
 
-	for (vector<vector<string> >::const_iterator i = strings.begin(); i != strings.end(); ++i) {
-		int32_t j;
-		vector<string>::const_iterator k;
+	for (vector<vector<pair<string, Symbol> > >::const_iterator i = m_program.begin(); i != m_program.end(); ++i) {
+		vector<pair<string, Symbol> >::const_iterator k;
+
 		// stack init
 		while (!symStack.empty()) {
 			symStack.pop();
 		}
+
 		symStack.push(NONE);
 		symStack.push(NTS_S);
 
-		k = (*i).begin(); // FIXME: Usar el iterador k en vez de el int j
-		j = 0;
+		k = (*i).begin();
 		rule = 0;
 
 		while (!symStack.empty()) {
-			currSym = lexer((*i)[j]);
+			currSym = (*k).second;
 			cout << "Current symbol: " << symToString(currSym) << endl;
 			cout << "Stack top: " << symToString(symStack.top()) << endl;
 
 			if (currSym == symStack.top()) {
-				cout << "Matched symbols: " << symToString(lexer((*i)[j])) << endl;
-				++j;
+				cout << "Matched symbols: " << symToString((*k).second) << endl;
+				++k;
 				symStack.pop();
 			} else {
 				// lookahead para NTS == NTS_S
@@ -135,7 +138,7 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 						Symbol la1;
 
 						if (currSym == TS_MARKER) {
-							la1 = lexer((*i)[j + 1]);
+							la1 = ((*(k + 1)).second);
 
 							if (la1 == TS_INST_0) { // NTS_S -> TS_MARKER TS_INST_0
 								rule = 4;
@@ -145,7 +148,7 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 						}
 
 						if (currSym == TS_INST_0) {
-							la1 = lexer((*i)[j + 1]);
+							la1 = ((*(k + 1)).second);
 
 							if (la1 == TS_COMMENT) { // NTS_S -> TS_INST(_0) TS_COMMENT
 								rule = 5;
@@ -157,14 +160,16 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 							Symbol la2;
 
 							if (currSym == TS_MARKER) {
-								la2 = lexer((*i)[j + 2]);
+								la2 = ((*(k + 2)).second);
+
 								if (la1 == TS_INST_1_LAB || la1 == TS_INST_1_OP) { // NTS_S -> TS_MARKER TS_INST_1_(LAB|OP)
 									rule = 4;
 								} else if (la1 == TS_INST_0 && la2 == TS_COMMENT) { // NTS_S -> TS_MARKER TS_INST_0 TS_COMMENT
 									rule = 7;
 								}
 							} else if (currSym == TS_INST_1_LAB || currSym == TS_INST_1_OP) {
-								la2 = lexer((*i)[j + 2]);
+								la2 = ((*(k + 2)).second);
+
 								if (la2 == TS_COMMENT) { // NTS_S -> TS_INST_1_(LAB|OP) TS_COMMENT
 									rule = 5;
 								}
@@ -172,9 +177,11 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 
 							if ((*i).size() > 3) {
 								Symbol la3;
+
 								if (currSym == TS_MARKER) {
 									if (la1 == TS_INST_1_LAB || la1 == TS_INST_1_OP) {
-										la3 = lexer((*i)[j + 3]);
+										la3 = ((*(k + 3)).second);
+
 										if (la3 == TS_COMMENT) { // NTS_S -> TS_MARKER NTS_INST TS_COMMENT
 											rule = 7;
 										}
@@ -215,9 +222,7 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 
 				case 5:
 					symStack.pop();
-					if ((*i).size() == 3) {
-						symStack.push(TS_COMMENT);
-					}
+					symStack.push(TS_COMMENT);
 					symStack.push(NTS_INST);
 					break;
 
@@ -262,7 +267,7 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 					break;
 
 				default:
-					cout << "default" << endl;
+					cout << "Parsing successful" << endl;
 					return 0;
 					break;
 				}
@@ -320,7 +325,6 @@ Program::Symbol Program::lexer(const string& str) {
 int32_t Program::readFile(const char* file) {
 	ifstream ifs(file);
 	string line;
-	vector<vector<string> > program;
 	vector<string> vecline;
 
 	if (!ifs.is_open() || ifs.bad()) {
@@ -331,11 +335,15 @@ int32_t Program::readFile(const char* file) {
 		getline(ifs, line);
 
 		if (!line.empty()) {
-			program.push_back(tokenize(line));
+			m_program.push_back(tokenize(line));
 		}
 	}
 	
-	LLparser(program);
+	showProgram();
+	showTokenizedProgram();
+	
+	cin.get();
+	//LLparser(program);
 
 	return 0;
 }
@@ -398,4 +406,24 @@ const string Program::symToString(Symbol sym) {
 	}
 
 	return str;
+}
+
+void Program::showProgram() {
+	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
+		cout << "I[" << i - m_program.begin() << "]";
+		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+			cout << " " << (*j).first;
+		}
+		cout << endl;
+	}
+}
+
+void Program::showTokenizedProgram() {
+	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
+		cout << "I[" << i - m_program.begin() << "]";
+		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+			cout << " " << symToString((*j).second);
+		}
+		cout << endl;
+	}
 }

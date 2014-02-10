@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <bits/stl_pair.h>
 #include <stdint.h>
 
 class Program {
@@ -72,6 +73,7 @@ public:
 	int32_t readFile(const char*);
 	static const std::string symToString(Symbol);
 private:
+	std::vector<std::vector<std::pair<std::string, Symbol> > > m_program;
 	/**
 	 * \fn CCTOR
 	 */
@@ -80,9 +82,11 @@ private:
 	 * \fn CCTOR
 	 */
 	Program& operator=(const Program& other);
-	const std::vector<std::string> tokenize(const std::string&);
+	const std::vector<std::pair<std::string, Symbol> > tokenize(const std::string&);
 	Program::Symbol lexer(const std::string&);
-	int32_t LLparser(const std::vector<std::vector<std::string> >&);
+	int32_t LLparser();
+	void showProgram();
+	void showTokenizedProgram();
 };
 
 #endif // PROGRAM_H
