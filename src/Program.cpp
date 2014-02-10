@@ -104,18 +104,18 @@ int32_t Program::LLparser() {
 		while (!symStack.empty()) {
 			symStack.pop();
 		}
-
 		symStack.push(NONE);
 		symStack.push(NTS_S);
 
 		k = (*i).begin();
-		rule = 0;
+		cout << "Current line size: " << (*i).size() << endl;
+
 
 		while (!symStack.empty()) {
 			currSym = (*k).second;
 			cout << "Current symbol: " << symToString(currSym) << endl;
 			cout << "Stack top: " << symToString(symStack.top()) << endl;
-
+			
 			if (currSym == symStack.top()) {
 				cout << "Matched symbols: " << symToString((*k).second) << endl;
 				++k;
@@ -131,9 +131,6 @@ int32_t Program::LLparser() {
 					6. NTS_S -> NTS_MARKER_INST_COMMENT
 				*/
 				if (symStack.top() == NTS_S) {
-					cout << "top == NTS_S" << endl;
-					cout << "size = " << (*i).size() << endl;
-
 					if ((*i).size() > 1) {
 						Symbol la1;
 
@@ -338,12 +335,8 @@ int32_t Program::readFile(const char* file) {
 			m_program.push_back(tokenize(line));
 		}
 	}
-	
-	showProgram();
-	showTokenizedProgram();
-	
-	cin.get();
-	//LLparser(program);
+
+	LLparser();
 
 	return 0;
 }
@@ -411,9 +404,11 @@ const string Program::symToString(Symbol sym) {
 void Program::showProgram() {
 	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
 		cout << "I[" << i - m_program.begin() << "]";
+
 		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
 			cout << " " << (*j).first;
 		}
+
 		cout << endl;
 	}
 }
@@ -421,9 +416,11 @@ void Program::showProgram() {
 void Program::showTokenizedProgram() {
 	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
 		cout << "I[" << i - m_program.begin() << "]";
+
 		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
 			cout << " " << symToString((*j).second);
 		}
+
 		cout << endl;
 	}
 }

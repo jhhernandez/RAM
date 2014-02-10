@@ -1,4 +1,4 @@
-; Lee de la cinta de entrada un n£mero "n"
+; Lee de la cinta de entrada un número "n"
 ; A continuaci¢n lee "n" n£meros y los almacena en el array
 ; Multiplica cada elemento del array por si mismo.
           READ 1                ; leer n   <- r1
