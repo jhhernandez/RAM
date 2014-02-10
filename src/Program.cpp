@@ -336,7 +336,6 @@ Program::Symbol Program::lexer(const string& str) {
 int32_t Program::readFile(const char* file) {
 	ifstream ifs(file);
 	string line;
-	string caca;
 	vector<vector<string> > program;
 	vector<string> vecline;
 
