@@ -27,24 +27,35 @@
 class Program {
 public:
 	typedef enum {
-	        NONE = -1,
-	        NTS_S = 0,
-	        NTS_INST,
-	        NTS_MARKER_INST,
-	        NTS_MARKER_COMMENT,
-	        NTS_INST_COMMENT,
-	        NTS_MARKER_INST_COMMENT,
+		NONE = -1,
+		NTS_S = 0,
+		NTS_INST,
 		NTS_OPERAND,
 		TS_MARKER,
-	        TS_LABEL,
+		TS_LABEL,
 		TS_COMMENT,
-	        TS_INST_0,
-	        TS_INST_1_LAB,
-	        TS_INST_1_OP,
-	        TS_OP_IMM,
-	        TS_OP_DIRECT,
-	        TS_OP_INDIRECT,
+		TS_INST_0,
+		TS_INST_1_LAB,
+		TS_INST_1_OP,
+		TS_OP_IMM,
+		TS_OP_DIRECT,
+		TS_OP_INDIRECT,
 	} Symbol;
+
+	typedef enum {
+		LOAD,
+		STORE,
+		READ,
+		WRITE,
+		ADD,
+		SUB,
+		MULT,
+		DIV,
+		JUMP,
+		JGTZ,
+		JZERO,
+		HALT
+	} Op;
 	/**
 	 * \fn CTOR
 	 */

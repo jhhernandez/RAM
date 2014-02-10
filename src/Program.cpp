@@ -33,15 +33,7 @@ Program::Program() {
 
 }
 
-Program::Program(const Program& other) {
-
-}
-
 Program::~Program() {
-
-}
-
-Program& Program::operator=(const Program& other) {
 
 }
 
@@ -50,20 +42,15 @@ const vector<string> Program::tokenize(const string& str)  {
 	int32_t wspos;
 	int32_t word_end;
 
-	//cout << "Tokenizing " << str << endl;
-
-	for (int32_t i = 0; i < str.size();) {
+	for (uint32_t i = 0; i < str.size();) {
 		wspos = str.find_first_not_of(" ", i);
 
 		if (str[wspos] == ';') {
-			// cout << "Token is a comment, pushing and breaking." << endl;
-			// cout << str.substr(i, str.size() - i) << endl;
 			tokens.push_back(str.substr(i, str.size() - i));
 			break;
 		}
 
 		word_end = str.find_first_of(" ", wspos);
-		// cout << "Token " << str.substr(wspos, word_end - wspos) << endl;
 		tokens.push_back(str.substr(wspos, word_end - wspos));
 		i = word_end;
 	}
@@ -77,7 +64,6 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 	stack<Symbol> symStack;
 	Symbol currSym;
 	int32_t rule;
-	vector<Symbol> la;
 
 	// table setup
 	// marker
@@ -87,35 +73,40 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 	// inst
 	// inst0
 	table[NTS_S][TS_INST_0] = 2;
-	table[NTS_INST][TS_INST_0] = 12;
+	table[NTS_INST][TS_INST_0] = 8;
 	// inst1label
 	table[NTS_S][TS_INST_1_LAB] = 2;
-	table[NTS_INST][TS_INST_1_LAB] = 13;
+	table[NTS_INST][TS_INST_1_LAB] = 9;
 	// inst1op
 	table[NTS_S][TS_INST_1_OP] = 2;
-	table[NTS_INST][TS_INST_1_OP] = 14;
+	table[NTS_INST][TS_INST_1_OP] = 10;
 	// operand
 	// imm
 	table[NTS_S][TS_OP_IMM]  = 2;
-	table[NTS_INST][TS_OP_IMM] = 14;
-	table[NTS_OPERAND][TS_OP_IMM] = 15;
+	table[NTS_INST][TS_OP_IMM] = 10;
+	table[NTS_OPERAND][TS_OP_IMM] = 11;
 	// direct
 	table[NTS_S][TS_OP_DIRECT]  = 2;
-	table[NTS_INST][TS_OP_DIRECT] = 14;
-	table[NTS_OPERAND][TS_OP_DIRECT] = 16;
+	table[NTS_INST][TS_OP_DIRECT] = 10;
+	table[NTS_OPERAND][TS_OP_DIRECT] = 12;
 	// indirect
 	table[NTS_S][TS_OP_INDIRECT]  = 2;
-	table[NTS_INST][TS_OP_INDIRECT] = 14;
-	table[NTS_OPERAND][TS_OP_INDIRECT] = 17;
+	table[NTS_INST][TS_OP_INDIRECT] = 10;
+	table[NTS_OPERAND][TS_OP_INDIRECT] = 13;
 
 	for (vector<vector<string> >::const_iterator i = strings.begin(); i != strings.end(); ++i) {
+		int32_t j;
+		vector<string>::const_iterator k;
 		// stack init
 		while (!symStack.empty()) {
 			symStack.pop();
 		}
 		symStack.push(NONE);
 		symStack.push(NTS_S);
-		int32_t j = 0;
+
+		k = (*i).begin(); // FIXME: Usar el iterador k en vez de el int j
+		j = 0;
+		rule = 0;
 
 		while (!symStack.empty()) {
 			currSym = lexer((*i)[j]);
@@ -139,7 +130,6 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 				if (symStack.top() == NTS_S) {
 					cout << "top == NTS_S" << endl;
 					cout << "size = " << (*i).size() << endl;
-					cin.get();
 
 					if ((*i).size() > 1) {
 						Symbol la1;
@@ -147,50 +137,57 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 						if (currSym == TS_MARKER) {
 							la1 = lexer((*i)[j + 1]);
 
-							if (la1 == NTS_INST) {
-								rule = 8;
-							} else if (la1 == TS_COMMENT) {
-								rule = 10;
+							if (la1 == TS_INST_0) { // NTS_S -> TS_MARKER TS_INST_0
+								rule = 4;
+							} else if (la1 == TS_COMMENT) { // NTS_S -> TS_MARKER TS_COMMENT
+								rule = 6;
 							}
 						}
 
 						if (currSym == TS_INST_0) {
 							la1 = lexer((*i)[j + 1]);
 
-							if (la1 == TS_COMMENT) {
-								rule = 9;
+							if (la1 == TS_COMMENT) { // NTS_S -> TS_INST(_0) TS_COMMENT
+								rule = 5;
 							}
 						}
 
-						if (currSym == TS_INST_1_LAB || currSym == TS_INST_1_OP) {
-							la1 = lexer((*i)[j + 2]);
-
-							if (la1 == TS_COMMENT) {
-								rule = 9;
-							}
-						}
 
 						if ((*i).size() > 2) {
 							Symbol la2;
 
-							if (la1 == TS_INST_0) {
+							if (currSym == TS_MARKER) {
 								la2 = lexer((*i)[j + 2]);
-							}
-
-							if (currSym == TS_MARKER && la2 == TS_COMMENT) {
-								if (la1 == TS_INST_0) {
-									rule = 11;	
+								if (la1 == TS_INST_1_LAB || la1 == TS_INST_1_OP) { // NTS_S -> TS_MARKER TS_INST_1_(LAB|OP)
+									rule = 4;
+								} else if (la1 == TS_INST_0 && la2 == TS_COMMENT) { // NTS_S -> TS_MARKER TS_INST_0 TS_COMMENT
+									rule = 7;
+								}
+							} else if (currSym == TS_INST_1_LAB || currSym == TS_INST_1_OP) {
+								la2 = lexer((*i)[j + 2]);
+								if (la2 == TS_COMMENT) { // NTS_S -> TS_INST_1_(LAB|OP) TS_COMMENT
+									rule = 5;
 								}
 							}
 
 							if ((*i).size() > 3) {
-
+								Symbol la3;
+								if (currSym == TS_MARKER) {
+									if (la1 == TS_INST_1_LAB || la1 == TS_INST_1_OP) {
+										la3 = lexer((*i)[j + 3]);
+										if (la3 == TS_COMMENT) { // NTS_S -> TS_MARKER NTS_INST TS_COMMENT
+											rule = 7;
+										}
+									}
+								}
 							}
 						}
 					} else {
+						// NTS_S -> NTS_MARKER|NTS_INST|NTS_COMMENT
 						rule = table[symStack.top()][currSym];
 					}
 				} else {
+					// NTS != NTS_S
 					rule = table[symStack.top()][currSym];
 				}
 
@@ -218,6 +215,10 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 
 				case 5:
 					symStack.pop();
+					if ((*i).size() == 3) {
+						symStack.push(TS_COMMENT);
+					}
+					symStack.push(NTS_INST);
 					break;
 
 				case 6:
@@ -230,50 +231,32 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 
 				case 8:
 					symStack.pop();
-					break;
-
-				case 9:
-					symStack.pop();
-					symStack.push(TS_COMMENT);
-					symStack.push(NTS_INST);
-					break;
-
-				case 10:
-					symStack.pop();
-					break;
-
-				case 11:
-					symStack.pop();
-					break;
-
-				case 12:
-					symStack.pop();
 					symStack.push(TS_INST_0);
 					break;
 
-				case 13:
+				case 9:
 					symStack.pop();
 					symStack.push(TS_LABEL);
 					symStack.push(TS_INST_1_LAB);
 					break;
 
-				case 14:
+				case 10:
 					symStack.pop();
 					symStack.push(NTS_OPERAND);
 					symStack.push(TS_INST_1_OP);
 					break;
 
-				case 15:
+				case 11:
 					symStack.pop();
 					symStack.push(TS_OP_IMM);
 					break;
 
-				case 16:
+				case 12:
 					symStack.pop();
 					symStack.push(TS_OP_DIRECT);
 					break;
 
-				case 17:
+				case 13:
 					symStack.pop();
 					symStack.push(TS_OP_INDIRECT);
 					break;
@@ -286,6 +269,7 @@ int32_t Program::LLparser(const vector<vector<string> >& strings) {
 			}
 		}
 
+		cout << "line parsed" << endl;
 		cin.get();
 	}
 
@@ -351,14 +335,6 @@ int32_t Program::readFile(const char* file) {
 		}
 	}
 	
-// 	for (vector<vector<string> >::const_iterator i = program.begin(); i != program.end(); ++i) {
-// 		for (vector<string>::const_iterator j = (*i).begin(); j != (*i).end(); ++j) {
-// 			cout << " Token: " << (*j);
-// 		}
-// 		cout << endl;
-// 	}
-// 	
-// 	cin.get();
 	LLparser(program);
 
 	return 0;
@@ -423,4 +399,3 @@ const string Program::symToString(Symbol sym) {
 
 	return str;
 }
-
