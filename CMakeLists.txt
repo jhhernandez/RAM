@@ -4,7 +4,7 @@ project (ram)
 
 set (CMAKE_BUILD_TYPE DEBUG)
 
-add_subdirectory (src)
+add_subdirectory (src/)
 
 find_package (Boost REQUIRED)
 
@@ -18,6 +18,7 @@ add_executable (ram main.cpp)
 target_link_libraries (
 	ram
 	${BOOST_REGEX_LIB}
+	Parser
 	Program
 )
 

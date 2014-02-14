@@ -28,4 +28,5 @@
                   WRITE =0
                   JUMP end
       output   :  WRITE =1
-         end   :  HALT
+         end   :  HALT
+

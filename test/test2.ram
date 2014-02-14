@@ -1,35 +1,36 @@
 ; Lee de la cinta de entrada un número "n"
 ; A continuaci¢n lee "n" n£meros y los almacena en el array
 ; Multiplica cada elemento del array por si mismo.
-          READ 1                ; leer n   <- r1
-          LOAD =3               ; j <- r2
-          STORE 2
-          READ *2               ; lee a[0] <- r3
-          LOAD 1                ; n = n - 1
-          SUB =1
-          STORE 1
-test:     LOAD 1
-          JZERO endwhile        ; si n = 0;
-          LOAD 2                ; j = j + 1
-          ADD =1
-          STORE 2
-          READ *2               ; se lee a[i]
-          LOAD 1                ; n = n - 1
-          SUB =1
-          STORE 1
-          JUMP test
-endwhile: LOAD =3
-          STORE 1
-condition:LOAD =6
-          SUB 1
-          JZERO endw
-          LOAD 1
-          STORE 2
-          LOAD *2
-          MULT *2
-          STORE *2
-          LOAD 1
-          ADD =1
-          STORE 1
-          JUMP condition
-endw:     HALT
+           READ 1                ; leer n   <- r1
+           LOAD =3               ; j <- r2
+           STORE 2
+           READ *2               ; lee a[0] <- r3
+           LOAD 1                ; n = n - 1
+           SUB =1
+           STORE 1
+test:      LOAD 1
+           JZERO endwhile        ; si n = 0;
+           LOAD 2                ; j = j + 1
+           ADD =1
+           STORE 2
+           READ *2               ; se lee a[i]
+           LOAD 1                ; n = n - 1
+           SUB =1
+           STORE 1
+           JUMP test
+endwhile:  LOAD =3
+           STORE 1
+condition: LOAD =6
+           SUB 1
+           JZERO endw
+           LOAD 1
+           STORE 2
+           LOAD *2
+           MULT *2
+           STORE *2
+           LOAD 1
+           ADD =1
+           STORE 1
+           JUMP condition
+endw:      HALT
+

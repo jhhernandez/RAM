@@ -5,8 +5,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-	Program p;
-	if (p.readFile("../test/test2.ram") < 0) {
-		cout << "ERROR" << endl;
-	}
+	Program p("../test/test2.ram");
+
+    p.showTokenizedProgram();
 }
