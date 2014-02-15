@@ -6,8 +6,8 @@ string symToString(Symbol sym) {
 	string str;
 
 	switch (sym) {
-	case NONE:
-        str = "";
+	case TS_EOL:
+		str = "TS_EOL";
 		break;
 
 	case NTS_S:

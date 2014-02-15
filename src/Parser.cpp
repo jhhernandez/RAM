@@ -40,6 +40,7 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 	vector<strSymPair> tokens;
 	int32_t wspos;
 	int32_t word_end;
+	Symbol symbol;
 
 	for (uint32_t i = 0; i < str.size();) {
 		wspos = str.find_first_not_of(" ", i);
@@ -50,34 +51,52 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 		}
 
 		word_end = str.find_first_of(" ", wspos);
-		tokens.push_back(strSymPair(str.substr(wspos, word_end - wspos),
-		                            lexer(str.substr(wspos, word_end - wspos))));
+		symbol = lexer(str.substr(wspos, word_end - wspos));
+		if (symbol == NONE) {
+			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
+					" no corresponde a ningún símbolo válido" << endl;
+		}
+		tokens.push_back(strSymPair(str.substr(wspos, word_end - wspos), symbol));
 		i = word_end;
 	}
 
-    tokens.push_back(strSymPair("", NONE));
+	tokens.push_back(strSymPair("", TS_EOL));
 
 	return tokens;
 }
 
 int32_t Parser::parse() {
 	/* LH RH Rule*/
-	map<Symbol, vector<symRulePair> > vtable;
+	map<Symbol, map<Symbol, uint32_t> > table;
 	stack<Symbol> symStack;
 	Symbol currSym;
 	int32_t rule;
+	uint32_t line;
 
 	// table setup
-    // marker
-    // comment
-    // inst
-    // inst0
-    // inst1label
-    // inst1op
-	// operand
-    // imm
-    // direct
-    // indirect
+	// NTS_S
+	table[NTS_S][TS_MARKER] = 1;
+	table[NTS_S][TS_INST_0] = 2;
+	table[NTS_S][TS_INST_1_LAB] = 2;
+	table[NTS_S][TS_INST_1_OP] = 2;
+	table[NTS_S][TS_COMMENT] = 3;
+	// NTS_A
+	table[NTS_A][TS_COMMENT] = 5;
+	table[NTS_A][TS_INST_0] = 4;
+	table[NTS_A][TS_INST_1_LAB] = 4;
+	table[NTS_A][TS_INST_1_OP] = 4;
+	table[NTS_A][TS_EOL] = 6;
+	// NTS_B
+	table[NTS_B][TS_COMMENT] = 7;
+	table[NTS_B][TS_EOL] = 8;
+	// NTS_INST
+	table[NTS_INST][TS_INST_0] = 9;
+	table[NTS_INST][TS_INST_1_LAB] = 10;
+	table[NTS_INST][TS_INST_1_OP] = 11;
+	// NTS_OPERAND
+	table[NTS_OPERAND][TS_OP_IMM] = 12;
+	table[NTS_OPERAND][TS_OP_DIRECT] = 13;
+	table[NTS_OPERAND][TS_OP_INDIRECT] = 14;
 
 	for (vector<vector<strSymPair> >::const_iterator i = m_program.begin(); i != m_program.end(); ++i) {
 		vector<strSymPair>::const_iterator j;
@@ -87,11 +106,12 @@ int32_t Parser::parse() {
 			symStack.pop();
 		}
 
-		symStack.push(NONE);
+		symStack.push(TS_EOL);
 		symStack.push(NTS_S);
 
 		j = (*i).begin();
-		cout << "Parsing line " << i - m_program.begin() << ", size= " << (*i).size() << endl;
+		line = i - m_program.begin();
+		cout << "Parsing line " << line << endl;
 
 
 		while (!symStack.empty()) {
@@ -104,43 +124,36 @@ int32_t Parser::parse() {
 				++j;
 				symStack.pop();
 			} else {
-				cout << "Comprobando reglas del vector " << symToString(symStack.top()) << endl;
-				cin.get();
-
-				for (vector<symRulePair>::iterator k = vtable[symStack.top()].begin();
-				                k != vtable[symStack.top()].end(); ++k) {
-					cout << symToString((*k).first) << endl;
-					if ((*k).first == currSym) {
-						rule = (*k).second;
-						cout << "Rule found for symbol " << symToString(currSym) << ", using rule " << rule << endl;
-						break;
-					}
-				}
+				rule = table[symStack.top()][currSym];
+				cout << "Regla " << rule << endl;
 
 				switch (rule) {
 				case 1:
 					symStack.pop();
-					for (vector<strSymPair>::const_iterator m = (*i).end(); m != j; --m) {
-						symStack.push((*m).second);
-					}
+					symStack.push(NTS_A);
+					symStack.push(TS_MARKER);
 					break;
 
 				case 2:
 					symStack.pop();
+					symStack.push(NTS_B);
+					symStack.push(NTS_INST);
 					break;
 
 				case 3:
 					symStack.pop();
-					symStack.push(TS_LABEL);
+					symStack.push(TS_COMMENT);
 					break;
 
 				case 4:
 					symStack.pop();
-					symStack.push(NTS_OPERAND);
+					symStack.push(NTS_B);
+					symStack.push(NTS_INST);
 					break;
 
 				case 5:
 					symStack.pop();
+					symStack.push(TS_COMMENT);
 					break;
 
 				case 6:
@@ -149,18 +162,69 @@ int32_t Parser::parse() {
 
 				case 7:
 					symStack.pop();
+					symStack.push(TS_COMMENT);
+					break;
+
+				case 8:
+					symStack.pop();
+					break;
+
+				case 9:
+					symStack.pop();
+					symStack.push(TS_INST_0);
+					break;
+
+				case 10:
+					symStack.pop();
+					symStack.push(TS_LABEL);
+					symStack.push(TS_INST_1_LAB);
+					break;
+
+				case 11:
+					symStack.pop();
+					symStack.push(NTS_OPERAND);
+					symStack.push(TS_INST_1_OP);
+					break;
+
+				case 12:
+					symStack.pop();
+					symStack.push(TS_OP_IMM);
+					break;
+
+				case 13:
+					symStack.pop();
+					symStack.push(TS_OP_DIRECT);
+					break;
+
+				case 14:
+					symStack.pop();
+					symStack.push(TS_OP_INDIRECT);
 					break;
 
 				default:
-					cout << "Parsing failed" << endl;
+					cout << "Parsing failed at line " << line << ": ";
+					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
+						cout << (*k).first << " ";
+					}
+					cout << endl;
+					cout << "\t\t\t\t"; // FIXME: Deja >= 25 espacios
+					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
+						if ((*k) == (*j)) {
+							cout << "^" << endl;
+						} else {
+							// FIXME: Introducir espacios aqui dependiendo de tal y cual
+						}
+					}
+					cout << endl;
+					cin.get();
+
 					return -1;
 					break;
 				}
 			}
 		}
 
-		cout << "line parsed" << endl;
-		cin.get();
+		cout << "line parsed" << endl << endl;
 	}
 
 	cout << "Done parsing" << endl;
@@ -169,7 +233,7 @@ int32_t Parser::parse() {
 
 Symbol Parser::lexer(const string& str) {
 	regex label("\\s*[_a-z][a-z]*\\s*");
-	regex marker("\\s*[_a-z][a-z]*:?\\s*");
+	regex marker("^\\s*[_a-z][a-z]*\\s*:\\s*"); // FIXME: No funciona cuando los dos puntos no estan pegados a la etiqueta
 	regex instruction("\\s*(?:READ|WRITE|LOAD|STORE|ADD|SUB|DIV|MULT|HALT|JUMP|JGTZ|JZERO)\\s*");
 	regex inst0("\\s*HALT\\s*");
 	regex inst1label("\\s*JUMP|JGTZ|JZERO\\s*");
@@ -179,11 +243,9 @@ Symbol Parser::lexer(const string& str) {
 	regex opind("\\s*\\*\\d+\\s*");
 
 	if (regex_match(str, marker)) {
-		if (regex_match(str, label)) {
-			return TS_LABEL;
-		}
-
 		return TS_MARKER;
+	} else if (regex_match(str, label)) {
+		return TS_LABEL;
 	} else if (regex_match(str, instruction)) {
 		if (regex_match(str, inst0)) {
 			return TS_INST_0;

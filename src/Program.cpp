@@ -27,7 +27,7 @@ using namespace std;
 Program::Program(const char* cstr) {
 	Parser p;
 	p.readFile(cstr);
-    //p.parse();
+	p.parse();
 	
 	m_program = p.program();
 }

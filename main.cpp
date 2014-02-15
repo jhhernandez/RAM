@@ -5,7 +5,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-	Program p("../test/test2.ram");
+	Program p("../test/test3.ram");
 
     p.showTokenizedProgram();
 }
