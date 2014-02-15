@@ -4,3 +4,4 @@ build/
 /Debug
 .project
 .cproject
+*.user

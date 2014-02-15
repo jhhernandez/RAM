@@ -21,6 +21,7 @@ enum Symbol {
         TS_OP_IMM,
         TS_OP_DIRECT,
 		TS_OP_INDIRECT,
+        TS_TP,
 		TS_EOL
 };
 
