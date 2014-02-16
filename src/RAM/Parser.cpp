@@ -23,6 +23,7 @@
 #include <fstream>
 #include <stack>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace boost;
@@ -37,15 +38,19 @@ Parser::~Parser() {
 
 const vector<strSymPair> Parser::tokenize(const string& str)  {
 	vector<strSymPair> tokens;
+	string substr;
 	int32_t wspos;
 	int32_t word_end;
 	Symbol symbol;
+	
+	cout << str << endl;
 
 	for (uint32_t i = 0; i < str.size();) {
 		wspos = str.find_first_not_of(" ", i);
 
 		if (str[wspos] == ';') {
-			tokens.push_back(strSymPair(str.substr(i, str.size() - i), TS_COMMENT));
+			substr = str.substr(i, str.size() - i);
+			tokens.push_back(strSymPair(substr, TS_COMMENT));
 			break;
 		}
 
@@ -53,18 +58,24 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 		symbol = lexer(str.substr(wspos, word_end - wspos));
 
 		if (symbol == TS_LABEL) {  // Hack para TS_MARKER con : separados
-			int32_t label_start;
-			int32_t label_end;
-			label_start = str.find_first_not_of(" ", word_end);
-			label_end = str.find_first_of(" ", label_start);
+			int32_t tp_start;
+			int32_t tp_end;
+			string label;
+			
+			label = str.substr(wspos, word_end - wspos);
+			trim_left(label);
+			trim_right(label);
+			
+			tp_start = str.find_first_not_of(" ", word_end);
+			tp_end = str.find_first_of(" ", tp_start);
 
-			if (label_start >= 0 && label_start < str.length() && label_end >= 0 && label_end < str.length()) {
-				if (lexer(str.substr(label_start, label_end - label_start)) == TS_TP) {
-					tokens.push_back(strSymPair(str.substr(wspos, label_end - wspos), TS_MARKER));
+			if (tp_start >= 0 && tp_start < str.size() && tp_end >= 0 && tp_end < str.size()) {
+				substr = str.substr(tp_start, tp_end - tp_start);
+				if (lexer(substr) == TS_TP) {
+					tokens.push_back(strSymPair(label + ":", TS_MARKER));
+					i = tp_end;
+					continue;
 				}
-
-				i = label_end;
-				continue;
 			}
 		}
 
@@ -72,8 +83,11 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
 			     " no corresponde a ningún símbolo válido" << endl;
 		}
-
-		tokens.push_back(strSymPair(str.substr(wspos, word_end - wspos), symbol));
+		
+		substr = str.substr(wspos, word_end - wspos);
+		trim_right(substr);
+		trim_left(substr);
+		tokens.push_back(strSymPair(substr, symbol));
 		i = word_end;
 	}
 
@@ -314,7 +328,7 @@ int32_t Parser::readFile(const char* file) {
 		for (vector<vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
 			cout << "I[" << i - program.begin() << "] ";
 			for (vector<strSymPair>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-				cout << symToString((*j).second) << " ";
+				cout << (*j).first << " ";
 			}
 			cout << endl;
 		}
