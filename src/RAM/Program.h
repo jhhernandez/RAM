@@ -31,11 +31,15 @@ public:
 	Program(const char*);
 	~Program();
 	
-	void showProgram();
-	void showTokenizedProgram();
+	const std::vector<std::vector<strSymPair> >& program() {
+		return m_program;
+	}
 private:
 	std::vector<std::vector<strSymPair> > m_program;
 	std::map<std::string, uint32_t> m_labels;
+	std::vector<std::pair<unsigned char, int32_t> > m_assembledProgram;
+	
+	void assemble();
 };
 
 #endif // PROGRAM_H

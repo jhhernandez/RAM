@@ -22,10 +22,13 @@
 
 #include <string>
 #include <stdint.h>
+#include "Registers.h"
+#include "Program.h"
 
 class Program;
 class Registers;
-class Tape;
+class ITape;
+class OTape;
 
 class Machine {
 public:
@@ -35,15 +38,20 @@ public:
 	uint32_t inputFile(const char*);
 	uint32_t outputFile(const char*);
 	uint32_t execute();
+
+	const std::vector<int32_t>& showRegisters() {
+		return m_registers->show();
+	}
+
+	const std::vector<std::vector<strSymPair> >& showProgram() {
+		return m_program->program();
+	}
 private:
 	Program* m_program;
 	Registers* m_registers;
-	Tape* m_inputTape;
-	Tape* m_outputTape;
-	
-	std::string m_programFile;
-	std::string m_inputFile;
-	std::string m_outputFile;
+	ITape* m_inputTape;
+	OTape* m_outputTape;
+	std::string m_trace;
 };
 
 #endif // MACHINE_H

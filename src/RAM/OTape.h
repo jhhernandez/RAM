@@ -17,36 +17,18 @@
  *
  */
 
+#ifndef OTAPE_H
+#define OTAPE_H
+
 #include "Tape.h"
 
-Tape::Tape(const char* file) {
-	// TODO
-}
+class OTape : Tape {
+public:
+	OTape(const char*);
+	~OTape();
+	void write(int32_t);
+private:
+	int32_t read();
+};
 
-Tape::~Tape() {
-
-}
-
-void Tape::left() {
-	if (m_position > 0) {
-		--m_position;
-	} else {
-		m_position = m_tape.size() - 1;
-	}
-}
-
-void Tape::right() {
-	if (m_position < m_tape.size()) {
-		++m_position;
-	} else {
-		m_position = 0;
-	}
-}
-
-int32_t Tape::read() {
-	return m_tape[m_position];
-}
-
-void Tape::write(int32_t input) {
-	m_tape[m_position] = input;
-}
+#endif // OTAPE_H

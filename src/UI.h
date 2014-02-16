@@ -3,26 +3,33 @@
 
 #include <stdint.h>
 
+class Machine;
+
 class UI {
 public:
-	UI();
+	UI(const Machine&);
 	~UI();
 	void run();
 
 private:
 	typedef enum{
 	        MENU,
+		REGS,
 	        TRACE,
 	        EXECUTE,
 	        DISASSEMBLER,
 	        INPUT,
-	        OUTPUT
+	        OUTPUT,
+		HELP
 	} Screen;
+	
+	Machine* m_machine;
 
 	Screen m_screen;
 	bool m_running;
 
 	void menu();
+	void registers();
 	void trace();
 	void execute();
 	void disassembler();

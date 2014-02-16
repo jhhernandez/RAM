@@ -29,6 +29,8 @@ Program::Program(const char* cstr) {
 	if (p.readFile(cstr) == 0) {
 		m_program = p.program();
 		m_labels = p.labels();
+		
+		assemble();
 	}
 }
 
@@ -36,27 +38,12 @@ Program::~Program() {
 
 }
 
-
-void Program::showProgram() {
-	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
-		cout << "I[" << i - m_program.begin() << "]";
-
-		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-			cout << " " << (*j).first;
+void Program::assemble() {
+	for (vector<vector<strSymPair> >::iterator i = m_program.begin();
+	     i != m_program.end(); ++i) {
+		for (vector<strSymPair>::iterator j = (*i).begin();
+		     j != (*i).end(); ++j) {
+			
 		}
-
-		cout << endl;
-	}
-}
-
-void Program::showTokenizedProgram() {
-	for (vector<vector<pair<string, Symbol> > >::iterator i = m_program.begin(); i != m_program.end(); ++i) {
-		cout << "I[" << i - m_program.begin() << "]";
-
-		for (vector<pair<string, Symbol> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-			cout << " " << symToString((*j).second);
-		}
-
-		cout << endl;
 	}
 }

@@ -47,11 +47,11 @@ public:
 	 */
 	int32_t parse(std::vector<std::vector<strSymPair> >);
 	
-	std::vector<std::vector<strSymPair> > program() {
+	const std::vector<std::vector<strSymPair> >& program() {
 		return m_program;
 	}
 	
-	std::map<std::string, uint32_t> labels() {
+	const std::map<std::string, uint32_t>& labels() {
 		return m_labels;
 	}
 

@@ -27,6 +27,9 @@ class Registers {
 public:
 	Registers();
 	~Registers();
+	const std::vector<int32_t>& show() {
+		return m_register;
+	}
 private:
 	std::vector<int32_t> m_register;
 };

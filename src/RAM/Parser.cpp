@@ -52,23 +52,27 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 		word_end = str.find_first_of(" ", wspos);
 		symbol = lexer(str.substr(wspos, word_end - wspos));
 
-        if (symbol == TS_LABEL) {  // Hack para TS_MARKER con : separados
-            int32_t label_start;
-            int32_t label_end;
-            label_start = str.find_first_not_of(" ", word_end);
-            label_end = str.find_first_of(" ", label_start);
-            if (label_start >= 0 && label_start < str.length() && label_end >= 0 && label_end < str.length()) {
-                if (lexer(str.substr(label_start, label_end - label_start)) == TS_TP) {
-                    tokens.push_back(strSymPair(str.substr(wspos, label_end - wspos), TS_MARKER));
-                }
-                i = label_end;
-                continue;
-            }
-        }
+		if (symbol == TS_LABEL) {  // Hack para TS_MARKER con : separados
+			int32_t label_start;
+			int32_t label_end;
+			label_start = str.find_first_not_of(" ", word_end);
+			label_end = str.find_first_of(" ", label_start);
+
+			if (label_start >= 0 && label_start < str.length() && label_end >= 0 && label_end < str.length()) {
+				if (lexer(str.substr(label_start, label_end - label_start)) == TS_TP) {
+					tokens.push_back(strSymPair(str.substr(wspos, label_end - wspos), TS_MARKER));
+				}
+
+				i = label_end;
+				continue;
+			}
+		}
+
 		if (symbol == NONE) {
 			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
-					" no corresponde a ningún símbolo válido" << endl;
+			     " no corresponde a ningún símbolo válido" << endl;
 		}
+
 		tokens.push_back(strSymPair(str.substr(wspos, word_end - wspos), symbol));
 		i = word_end;
 	}
@@ -125,7 +129,7 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 		j = (*i).begin();
 		line = i - program.begin();
 //		cout << "Parsing line " << line << endl;
-		
+
 		while (!symStack.empty()) {
 			currSym = (*j).second;
 //			cout << "Current symbol: " << symToString(currSym) << endl;
@@ -215,11 +219,14 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 
 				default:
 					cout << "Parsing failed at line " << line << ": ";
+
 					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
 						cout << (*k).first << " ";
 					}
+
 					cout << endl;
 					cout << "\t\t\t\t"; // FIXME: Deja >= 25 espacios
+
 					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
 						if ((*k) == (*j)) {
 							cout << "^" << endl;
@@ -227,6 +234,7 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 							// FIXME: Introducir espacios aqui dependiendo de tal y cual
 						}
 					}
+
 					cout << endl;
 					cin.get();
 
@@ -239,13 +247,13 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 //		cout << "line parsed" << endl << endl;
 	}
 
-	cout << "Done parsing" << endl;
+//	cout << "Done parsing" << endl;
 	return 0;
 }
 
 Symbol Parser::lexer(const string& str) {
 	regex label("\\s*[_a-z][a-z]*\\s*");
-    regex marker("^\\s*[_a-z][a-z]*\\s*:\\s*");
+	regex marker("^\\s*[_a-z][a-z]*\\s*:\\s*");
 	regex instruction("\\s*(?:READ|WRITE|LOAD|STORE|ADD|SUB|DIV|MULT|HALT|JUMP|JGTZ|JZERO)\\s*");
 	regex inst0("\\s*HALT\\s*");
 	regex inst1label("\\s*JUMP|JGTZ|JZERO\\s*");
@@ -253,7 +261,7 @@ Symbol Parser::lexer(const string& str) {
 	regex operand("\\s*[=*]?\\d+\\s*");
 	regex opimm("\\s*=\\d+\\s*");
 	regex opind("\\s*\\*\\d+\\s*");
-    regex tp("\\s*:\\s*");
+	regex tp("\\s*:\\s*");
 
 	if (regex_match(str, marker)) {
 		return TS_MARKER;
@@ -277,9 +285,9 @@ Symbol Parser::lexer(const string& str) {
 		}
 
 		return TS_OP_DIRECT;
-    } else if (regex_match(str, tp)) {
-        return TS_TP;
-    } else {
+	} else if (regex_match(str, tp)) {
+		return TS_TP;
+	} else {
 		return NONE;
 	}
 }
@@ -301,21 +309,30 @@ int32_t Parser::readFile(const char* file) {
 			program.push_back(tokenize(line));
 		}
 	}
-	
+
 	if (parse(program) == 0) {
-		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
-			if ((*i)[0].second != TS_COMMENT) {
-				m_program.push_back((*i));
-				if((*i)[0].second == TS_MARKER) {
-					if (m_labels.count((*i)[0].first) == 0) {
-						m_labels[(*i)[0].first] = m_program.size() - 1;
-					} else {
-						cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
-						return -1;
-					}
-				}
+		for (vector<vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
+			cout << "I[" << i - program.begin() << "] ";
+			for (vector<strSymPair>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+				cout << symToString((*j).second) << " ";
 			}
+			cout << endl;
 		}
+		cin.get();
+// 		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
+// 			if ((*i)[0].second != TS_COMMENT) {
+// 				m_program.push_back((*i));
+// 
+// 				if ((*i)[0].second == TS_MARKER) {
+// 					if (m_labels.count((*i)[0].first) == 0) {
+// 						m_labels[(*i)[0].first] = m_program.size() - 1;
+// 					} else {
+// 						// cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
+// 						return -1;
+// 					}
+// 				}
+// 			}
+// 		}
 	} else {
 		return -1;
 	}

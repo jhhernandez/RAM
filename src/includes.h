@@ -6,10 +6,10 @@
 #include <stdint.h>
 
 enum Symbol {
-		NONE = -1,
+	NONE = -1,
         NTS_S = 0,
-		NTS_A,
-		NTS_B,
+	NTS_A,
+	NTS_B,
         NTS_INST,
         NTS_OPERAND,
         TS_MARKER,
@@ -20,9 +20,9 @@ enum Symbol {
         TS_INST_1_OP,
         TS_OP_IMM,
         TS_OP_DIRECT,
-		TS_OP_INDIRECT,
+	TS_OP_INDIRECT,
         TS_TP,
-		TS_EOL
+	TS_EOL
 };
 
 typedef unsigned char opCode;

@@ -8,10 +8,10 @@ using namespace std;
 int main(int argc, char** argv) {
 	Machine m;
 	m.programFile("../test/test3.ram");
+	//m.inputFile("../tape");
+	//m.outputFile("../tape");
 	
-	m.execute();
-
-	UI ui;
+	UI ui(m);
 	ui.run();
 }
 

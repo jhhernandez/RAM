@@ -19,11 +19,14 @@
 
 #include "Machine.h"
 
+#include <stddef.h>
+
 #include "Program.h"
 #include "Registers.h"
-#include "Tape.h"
+#include "ITape.h"
+#include "OTape.h"
 
-Machine::Machine() {
+Machine::Machine() : m_program(NULL), m_inputTape(NULL), m_outputTape(NULL) {
 	m_registers = new Registers;
 }
 
@@ -32,14 +35,17 @@ Machine::~Machine() {
 		delete m_program;
 		m_program = NULL;
 	}
+
 	if (m_inputTape != NULL) {
 		delete m_inputTape;
 		m_inputTape = NULL;
 	}
+
 	if (m_outputTape != NULL) {
 		delete m_outputTape;
 		m_outputTape = NULL;
 	}
+
 	if (m_registers != NULL) {
 		delete m_registers;
 		m_registers = NULL;
@@ -51,17 +57,18 @@ uint32_t Machine::programFile(const char* file) {
 }
 
 uint32_t Machine::inputFile(const char* file) {
-	m_inputTape = new Tape(file);
+	m_inputTape = new ITape(file);
 }
 
 uint32_t Machine::outputFile(const char* file) {
-	m_outputTape = new Tape(file);
+	m_outputTape = new OTape(file);
 }
 
 uint32_t Machine::execute() {
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
 		return 0;
 	}
+
 	return -1;
 }
 

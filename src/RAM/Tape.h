@@ -26,9 +26,15 @@
 class Tape {
 public:
 	Tape(const char*);
-	~Tape();
+	virtual ~Tape() = 0;
+	void left();
+	void right();
 private:
 	std::vector<int32_t> m_tape;
+	uint32_t m_position;
+protected:
+	int32_t read();
+	void write(int32_t);
 };
 
 #endif // TAPE_H
