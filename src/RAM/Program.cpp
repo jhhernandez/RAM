@@ -26,10 +26,10 @@ using namespace std;
 
 Program::Program(const char* cstr) {
 	Parser p;
-	p.readFile(cstr);
-	p.parse();
-	
-	m_program = p.program();
+	if (p.readFile(cstr) == 0) {
+		m_program = p.program();
+		m_labels = p.labels();
+	}
 }
 
 Program::~Program() {

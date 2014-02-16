@@ -21,7 +21,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <stack>
 #include <boost/regex.hpp>
 
@@ -29,7 +28,7 @@ using namespace std;
 using namespace boost;
 
 Parser::Parser() {
-
+	m_program.resize(0);
 }
 
 Parser::~Parser() {
@@ -79,7 +78,7 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 	return tokens;
 }
 
-int32_t Parser::parse() {
+int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 	/* LH RH Rule*/
 	map<Symbol, map<Symbol, uint32_t> > table;
 	stack<Symbol> symStack;
@@ -112,7 +111,7 @@ int32_t Parser::parse() {
 	table[NTS_OPERAND][TS_OP_DIRECT] = 13;
 	table[NTS_OPERAND][TS_OP_INDIRECT] = 14;
 
-	for (vector<vector<strSymPair> >::const_iterator i = m_program.begin(); i != m_program.end(); ++i) {
+	for (vector<vector<strSymPair> >::const_iterator i = program.begin(); i != program.end(); ++i) {
 		vector<strSymPair>::const_iterator j;
 
 		// stack init
@@ -124,10 +123,9 @@ int32_t Parser::parse() {
 		symStack.push(NTS_S);
 
 		j = (*i).begin();
-		line = i - m_program.begin();
+		line = i - program.begin();
 //		cout << "Parsing line " << line << endl;
-
-
+		
 		while (!symStack.empty()) {
 			currSym = (*j).second;
 //			cout << "Current symbol: " << symToString(currSym) << endl;
@@ -287,6 +285,7 @@ Symbol Parser::lexer(const string& str) {
 }
 
 int32_t Parser::readFile(const char* file) {
+	std::vector<std::vector<strSymPair> > program;
 	ifstream ifs(file);
 	string line;
 	vector<string> vecline;
@@ -299,8 +298,26 @@ int32_t Parser::readFile(const char* file) {
 		getline(ifs, line);
 
 		if (!line.empty()) {
-			m_program.push_back(tokenize(line));
+			program.push_back(tokenize(line));
 		}
+	}
+	
+	if (parse(program) == 0) {
+		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
+			if ((*i)[0].second != TS_COMMENT) {
+				m_program.push_back((*i));
+				if((*i)[0].second == TS_MARKER) {
+					if (m_labels.count((*i)[0].first) == 0) {
+						m_labels[(*i)[0].first] = m_program.size() - 1;
+					} else {
+						cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
+						return -1;
+					}
+				}
+			}
+		}
+	} else {
+		return -1;
 	}
 
 	return 0;

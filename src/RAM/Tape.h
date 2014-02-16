@@ -17,22 +17,18 @@
  *
  */
 
-#ifndef PROGRAM_H
-#define PROGRAM_H
-
-#include "includes.h"
+#ifndef TAPE_H
+#define TAPE_H
 
 #include <vector>
+#include <stdint.h>
 
-class Program {
+class Tape {
 public:
-	Program(const char*);
-	~Program();
-	
-	void showProgram();
-	void showTokenizedProgram();
+	Tape(const char*);
+	~Tape();
 private:
-	std::vector<std::vector<strSymPair> > m_program;
+	std::vector<int32_t> m_tape;
 };
 
-#endif // PROGRAM_H
+#endif // TAPE_H
