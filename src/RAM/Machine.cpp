@@ -215,10 +215,8 @@ void Machine::debug() {
 }
 
 void Machine::step() {
-	string state;
 	printw("%d %d\n", m_currentOP, m_program->program()[m_instPointer].second);
-	state = m_currentOP + " " + m_program->program()[m_instPointer].second;
-	m_machineState = m_instPointer;
+
 	switch (m_currentOP & 0xE0) {
 	case 0x20: // ARITMÉTICAS
 		arithmeticOps(m_program->program()[m_instPointer]);

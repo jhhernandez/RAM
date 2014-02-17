@@ -61,19 +61,13 @@ public:
 	const std::vector<int32_t>& showOutputTape() {
 		return m_outputTape->show();
 	}
-	
 
-	void trace(bool val) {
-		m_trace = val;
-	}
-	
 	void step();
 private:
 	Program* m_program;
 	Registers* m_registers;
 	ITape* m_inputTape;
 	OTape* m_outputTape;
-	bool m_trace;
 	uint32_t m_instPointer;
 	OPCode m_currentOP;
 	std::string m_machineState;
