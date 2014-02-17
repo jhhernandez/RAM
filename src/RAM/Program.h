@@ -31,13 +31,17 @@ public:
 	Program(const char*);
 	~Program();
 	
-	const std::vector<std::vector<strSymPair> >& program() {
+	const std::vector<std::vector<strSymPair> >& programCode() {
 		return m_program;
+	}
+	
+	const std::vector<std::pair<OPCode, int32_t> >& program() {
+		return m_assembledProgram;
 	}
 private:
 	std::vector<std::vector<strSymPair> > m_program;
 	std::map<std::string, uint32_t> m_labels;
-	std::vector<std::pair<unsigned char, int32_t> > m_assembledProgram;
+	std::vector<std::pair<OPCode, int32_t> > m_assembledProgram;
 	
 	void assemble();
 };

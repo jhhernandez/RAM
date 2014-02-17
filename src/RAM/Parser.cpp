@@ -42,8 +42,6 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 	int32_t wspos;
 	int32_t word_end;
 	Symbol symbol;
-	
-	cout << str << endl;
 
 	for (uint32_t i = 0; i < str.size();) {
 		wspos = str.find_first_not_of(" ", i);
@@ -325,28 +323,20 @@ int32_t Parser::readFile(const char* file) {
 	}
 
 	if (parse(program) == 0) {
-		for (vector<vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
-			cout << "I[" << i - program.begin() << "] ";
-			for (vector<strSymPair>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-				cout << (*j).first << " ";
+		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
+			if ((*i)[0].second != TS_COMMENT) {
+				m_program.push_back((*i));
+
+				if ((*i)[0].second == TS_MARKER) {
+					if (m_labels.count((*i)[0].first.substr(0, (*i)[0].first.size() - 1)) == 0) {
+						m_labels[(*i)[0].first.substr(0, (*i)[0].first.size() - 1)] = m_program.size() - 1;
+					} else {
+						// cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
+						return -1;
+					}
+				}
 			}
-			cout << endl;
 		}
-		cin.get();
-// 		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
-// 			if ((*i)[0].second != TS_COMMENT) {
-// 				m_program.push_back((*i));
-// 
-// 				if ((*i)[0].second == TS_MARKER) {
-// 					if (m_labels.count((*i)[0].first) == 0) {
-// 						m_labels[(*i)[0].first] = m_program.size() - 1;
-// 					} else {
-// 						// cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
-// 						return -1;
-// 					}
-// 				}
-// 			}
-// 		}
 	} else {
 		return -1;
 	}

@@ -19,8 +19,9 @@
 
 #include "Tape.h"
 
-Tape::Tape(const char* file) {
-	// TODO
+using namespace std;
+
+Tape::Tape(const char* file, ios_base::openmode mode) : m_file(file), m_position(0) {
 }
 
 Tape::~Tape() {
@@ -41,12 +42,4 @@ void Tape::right() {
 	} else {
 		m_position = 0;
 	}
-}
-
-int32_t Tape::read() {
-	return m_tape[m_position];
-}
-
-void Tape::write(int32_t input) {
-	m_tape[m_position] = input;
 }

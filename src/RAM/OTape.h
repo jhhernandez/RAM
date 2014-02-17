@@ -22,11 +22,12 @@
 
 #include "Tape.h"
 
-class OTape : Tape {
+class OTape : public Tape {
 public:
 	OTape(const char*);
 	~OTape();
 	void write(int32_t);
+	void save();
 private:
 	int32_t read();
 };

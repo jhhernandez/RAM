@@ -20,9 +20,13 @@
 #include "Registers.h"
 
 Registers::Registers() {
-
+	m_register.resize(10);
 }
 
 Registers::~Registers() {
 
+}
+
+void Registers::setACC(int32_t val) {
+	m_register[0] = val;
 }

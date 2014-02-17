@@ -21,18 +21,25 @@
 #define TAPE_H
 
 #include <vector>
+#include <ios>
+#include <string>
 #include <stdint.h>
 
 class Tape {
 public:
-	Tape(const char*);
+	Tape(const char*, std::ios_base::openmode);
 	virtual ~Tape() = 0;
 	void left();
 	void right();
-private:
+	const std::vector<int32_t>& show() {
+		return m_tape;
+	}
+
+protected:
+	std::string m_file;
 	std::vector<int32_t> m_tape;
 	uint32_t m_position;
-protected:
+
 	int32_t read();
 	void write(int32_t);
 };

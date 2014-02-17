@@ -22,7 +22,7 @@
 
 #include "Tape.h"
 
-class ITape : Tape {
+class ITape : public Tape {
 public:
 	ITape(const char*);
 	~ITape();

@@ -23,10 +23,16 @@
 
 #include "Program.h"
 #include "Registers.h"
+#include "Tape.h"
 #include "ITape.h"
 #include "OTape.h"
+#include <iostream>
+#include <curses.h>
 
-Machine::Machine() : m_program(NULL), m_inputTape(NULL), m_outputTape(NULL) {
+using namespace std;
+
+Machine::Machine() :
+	m_program(NULL), m_inputTape(NULL), m_outputTape(NULL), m_instPointer(0) {
 	m_registers = new Registers;
 }
 
@@ -64,11 +70,171 @@ uint32_t Machine::outputFile(const char* file) {
 	m_outputTape = new OTape(file);
 }
 
-uint32_t Machine::execute() {
+uint32_t Machine::run() {
+	m_instPointer = 0;
+
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
+		while (m_currentOP != HALT) {
+			m_currentOP = m_program->program()[m_instPointer].first;
+			cout << m_currentOP << endl;
+
+			switch (m_currentOP & 0xE0) {
+			case 0x20: // ARITMÉTICAS
+				arithmeticOps(m_program->program()[m_instPointer]);
+				break;
+
+			case 0x40: // REGISTROS
+				registerOps(m_program->program()[m_instPointer]);
+				break;
+
+			case  0x80: // SALTOS
+				jumpOps(m_program->program()[m_instPointer]);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		m_outputTape->save();
 		return 0;
 	}
 
 	return -1;
 }
 
+void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
+	int32_t tempOperand;
+
+	switch (oper.first & 0x1C) {
+	case IMM:
+		tempOperand = oper.second;
+		break;
+
+	case DIRECT:
+		tempOperand = (*m_registers)[oper.second];
+		break;
+
+	case INDIRECT:
+		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
+		break;
+	}
+
+	switch (oper.first & 0x3) { // FIXME: No se comprueban desbordamientos
+	case ADD:
+		m_registers->setACC(m_registers->getACC() + tempOperand);
+		break;
+
+	case SUB:
+		m_registers->setACC(m_registers->getACC() - tempOperand);
+		break;
+
+	case MULT:
+		m_registers->setACC(m_registers->getACC() * tempOperand);
+		break;
+
+	case DIV:
+		if (tempOperand == 0) {
+			m_currentOP = HALT;
+		} else {
+			m_registers->setACC(m_registers->getACC() / tempOperand);
+		}
+
+		break;
+	}
+
+	++m_instPointer;
+}
+
+void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
+	int32_t tempOperand;
+
+	switch (oper.first & 0x1C) {
+	case IMM:
+		tempOperand = oper.second;
+		break;
+
+	case DIRECT:
+		tempOperand = (*m_registers)[oper.second];
+		break;
+
+	case INDIRECT:
+		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
+		break;
+	}
+
+	switch (oper.first & 0x3) {
+	case LOAD:
+		m_registers->setACC(tempOperand);
+		break;
+
+	case STORE:
+		(*m_registers)[tempOperand] = m_registers->getACC();
+		break;
+
+	case READ:
+		(*m_registers)[tempOperand] = m_inputTape->read();
+		break;
+
+	case WRITE:
+		break;
+	}
+
+	++m_instPointer;
+}
+
+void Machine::jumpOps(std::pair<OPCode, int32_t> oper) {
+	switch (oper.first) {
+	case JUMP:
+		m_instPointer = oper.second;
+		break;
+
+	case JGTZ:
+		if (m_registers->getACC() > 0) {
+			m_instPointer = oper.second;
+		} else {
+			++m_instPointer;
+		}
+
+		break;
+
+	case JZERO:
+		if (m_registers->getACC() == 0) {
+			m_instPointer = oper.second;
+		} else {
+			++m_instPointer;
+		}
+
+		break;
+	}
+}
+
+void Machine::debug() {
+	m_instPointer = 0;
+	m_currentOP = m_program->program()[m_instPointer].first;
+}
+
+void Machine::step() {
+	string state;
+	printw("%d %d\n", m_currentOP, m_program->program()[m_instPointer].second);
+	state = m_currentOP + " " + m_program->program()[m_instPointer].second;
+	m_machineState = m_instPointer;
+	switch (m_currentOP & 0xE0) {
+	case 0x20: // ARITMÉTICAS
+		arithmeticOps(m_program->program()[m_instPointer]);
+		break;
+
+	case 0x40: // REGISTROS
+		registerOps(m_program->program()[m_instPointer]);
+		break;
+
+	case  0x80: // SALTOS
+		jumpOps(m_program->program()[m_instPointer]);
+		break;
+
+	default:
+		break;
+	}
+	
+	m_currentOP = m_program->program()[m_instPointer].first;
+}

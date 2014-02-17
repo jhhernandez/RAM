@@ -30,6 +30,15 @@ public:
 	const std::vector<int32_t>& show() {
 		return m_register;
 	}
+	
+	void setACC(int32_t);
+	int32_t& operator[] (uint32_t pos) {
+		return m_register[pos];
+	}
+	
+	int32_t getACC() {
+		return m_register[0];
+	}
 private:
 	std::vector<int32_t> m_register;
 };

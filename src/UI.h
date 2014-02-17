@@ -27,11 +27,11 @@ private:
 
 	Screen m_screen;
 	bool m_running;
+	bool m_next;
 
 	void menu();
 	void registers();
 	void trace();
-	void execute();
 	void disassembler();
 	void input();
 	void output();

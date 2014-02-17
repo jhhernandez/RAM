@@ -18,9 +18,25 @@
  */
 
 #include "ITape.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
-ITape::ITape(const char* file) : Tape(file) {
+using namespace std;
 
+ITape::ITape(const char* file) : Tape(file, ios_base::in) {
+	fstream ifs(file);
+	string str;
+	int32_t tmp;
+	
+	if (ifs.is_open() && ifs.good()) {
+		while (!ifs.eof()) {
+			getline(ifs, str);
+			stringstream ss(str);
+			ss >> tmp;
+			m_tape.push_back(tmp);
+		}
+	}
 }
 
 ITape::~ITape() {
@@ -28,5 +44,6 @@ ITape::~ITape() {
 }
 
 int32_t ITape::read() {
-
+	return m_tape[m_position];
+	right();
 }
