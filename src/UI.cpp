@@ -207,6 +207,9 @@ void UI::disassembler() {
 		for (vector<strSymPair>::const_iterator j = (*i).begin();
 		     j != (*i).end(); ++j) {
 			printw("%s ", (*j).first.c_str());
+// 			if ((*j).second == TS_LABEL) {
+// 				printw("(%d)", m_machine->showLabels()[(*j).first]);
+// 			}
 		}
 		printw("\n");
 	}

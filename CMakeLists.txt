@@ -12,7 +12,7 @@ find_package(Curses REQUIRED)
 
 if(Boost_FOUND)
         include_directories(${Boost_INCLUDE_DIRS})
-        set(BOOST_REGEX_LIB ${Boost_LIBRARY_DIRS}/x86_64-linux-gnu/libboost_regex.so)
+        set(BOOST_REGEX_LIB ${Boost_LIBRARY_DIRS}/libboost_regex.so)
 endif(Boost_FOUND)
 
 if(CURSES_FOUND)

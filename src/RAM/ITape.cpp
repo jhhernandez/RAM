@@ -36,6 +36,7 @@ ITape::ITape(const char* file) : Tape(file, ios_base::in) {
 			ss >> tmp;
 			m_tape.push_back(tmp);
 		}
+		ifs.close();
 	}
 }
 

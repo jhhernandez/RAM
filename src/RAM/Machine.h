@@ -50,6 +50,10 @@ public:
 		return m_program->programCode();
 	}
 	
+	const std::map<std::string, uint32_t>& showLabels() {
+		return m_program->labels();
+	}
+	
 	const char* state() {
 		return m_machineState.c_str();
 	}
@@ -64,6 +68,8 @@ public:
 
 	void step();
 private:
+	static const uint32_t MAX_OPERAND_SIZE = 256;
+
 	Program* m_program;
 	Registers* m_registers;
 	ITape* m_inputTape;
@@ -71,7 +77,7 @@ private:
 	uint32_t m_instPointer;
 	OPCode m_currentOP;
 	std::string m_machineState;
-	
+
 	void arithmeticOps(std::pair<OPCode, int32_t>);
 	void registerOps(std::pair<OPCode, int32_t>);
 	void jumpOps(std::pair<OPCode, int32_t>);

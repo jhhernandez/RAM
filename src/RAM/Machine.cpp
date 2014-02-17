@@ -72,11 +72,12 @@ uint32_t Machine::outputFile(const char* file) {
 
 uint32_t Machine::run() {
 	m_instPointer = 0;
+	
+	m_currentOP = m_program->program()[m_instPointer].first;
 
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
 		while (m_currentOP != HALT) {
 			m_currentOP = m_program->program()[m_instPointer].first;
-			cout << m_currentOP << endl;
 
 			switch (m_currentOP & 0xE0) {
 			case 0x20: // ARITMÉTICAS
@@ -92,6 +93,7 @@ uint32_t Machine::run() {
 				break;
 
 			default:
+				m_currentOP = HALT;
 				break;
 			}
 		}
@@ -120,7 +122,7 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
 		break;
 	}
 
-	switch (oper.first & 0x3) { // FIXME: No se comprueban desbordamientos
+	switch (oper.first & 0x23) { // FIXME: No se comprueban desbordamientos
 	case ADD:
 		m_registers->setACC(m_registers->getACC() + tempOperand);
 		break;
@@ -148,6 +150,7 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
 
 void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 	int32_t tempOperand;
+	printw("%d\n", oper.first);
 
 	switch (oper.first & 0x1C) {
 	case IMM:
@@ -163,7 +166,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 		break;
 	}
 
-	switch (oper.first & 0x3) {
+	switch (oper.first & 0x43) {
 	case LOAD:
 		m_registers->setACC(tempOperand);
 		break;
@@ -177,6 +180,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 		break;
 
 	case WRITE:
+		m_outputTape->write(tempOperand);
 		break;
 	}
 
@@ -184,7 +188,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 }
 
 void Machine::jumpOps(std::pair<OPCode, int32_t> oper) {
-	switch (oper.first) {
+	switch (oper.first & 0x87) {
 	case JUMP:
 		m_instPointer = oper.second;
 		break;

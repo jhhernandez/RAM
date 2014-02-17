@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
 	Machine m;
-	m.programFile("../test/test3.ram");
+	m.programFile("../test/test2.ram");
 	m.inputFile("../test/input");
 	m.outputFile("../test/output");
 	

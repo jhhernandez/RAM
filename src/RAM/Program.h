@@ -38,6 +38,10 @@ public:
 	const std::vector<std::pair<OPCode, int32_t> >& program() {
 		return m_assembledProgram;
 	}
+	
+	const std::map<std::string, uint32_t>& labels() {
+		return m_labels;
+	}
 private:
 	std::vector<std::vector<strSymPair> > m_program;
 	std::map<std::string, uint32_t> m_labels;
