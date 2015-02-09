@@ -50,6 +50,10 @@ public:
 		return m_program->programCode();
 	}
 	
+	const std::vector<std::pair<OPCode, int32_t>>& assembly() {
+		return m_program->program();
+	}
+	
 	const std::map<std::string, uint32_t>& showLabels() {
 		return m_program->labels();
 	}

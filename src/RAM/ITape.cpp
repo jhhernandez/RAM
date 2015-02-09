@@ -45,6 +45,5 @@ ITape::~ITape() {
 }
 
 int32_t ITape::read() {
-	return m_tape[m_position];
-	right();
+	return m_tape[m_position++];
 }

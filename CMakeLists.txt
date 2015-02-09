@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 project(ram)
 
 set(CMAKE_BUILD_TYPE DEBUG)
+list(APPEND CMAKE_CXX_FLAGS "-std=c++14")
 
+include_directories(src/)
+include_directories(src/RAM)
 add_subdirectory(src/)
 
 find_package(Boost REQUIRED)
@@ -16,7 +19,7 @@ if(Boost_FOUND)
 endif(Boost_FOUND)
 
 if(CURSES_FOUND)
-    set(NCURSES_LIBRARY /usr/lib/x86_64-linux-gnu/libncurses.so)
+    set(NCURSES_LIBRARY /usr/lib/libncurses.so)
 endif(CURSES_FOUND)
 
 add_executable(ram main.cpp)

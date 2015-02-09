@@ -140,20 +140,20 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 
 		j = (*i).begin();
 		line = i - program.begin();
-//		cout << "Parsing line " << line << endl;
+// 		cout << "Parsing line " << line << endl;
 
 		while (!symStack.empty()) {
 			currSym = (*j).second;
-//			cout << "Current symbol: " << symToString(currSym) << endl;
-//			cout << "Stack top: " << symToString(symStack.top()) << endl;
+// 			cout << "Current symbol: " << symToString(currSym) << endl;
+// 			cout << "Stack top: " << symToString(symStack.top()) << endl;
 
 			if (currSym == symStack.top()) {
-//				cout << "Matched symbols: " << symToString((*j).second) << endl;
+// 				cout << "Matched symbols: " << symToString((*j).second) << endl;
 				++j;
 				symStack.pop();
 			} else {
 				rule = table[symStack.top()][currSym];
-//				cout << "Regla " << rule << endl;
+// 				cout << "Regla " << rule << endl;
 
 				switch (rule) {
 				case 1:
@@ -256,10 +256,10 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 			}
 		}
 
-//		cout << "line parsed" << endl << endl;
+// 		cout << "line parsed" << endl << endl;
 	}
 
-//	cout << "Done parsing" << endl;
+// 	cout << "Done parsing" << endl;
 	return 0;
 }
 
@@ -331,7 +331,7 @@ int32_t Parser::readFile(const char* file) {
 					if (m_labels.count((*i)[0].first.substr(0, (*i)[0].first.size() - 1)) == 0) {
 						m_labels[(*i)[0].first.substr(0, (*i)[0].first.size() - 1)] = m_program.size() - 1;
 					} else {
-						// cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
+// 						cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
 						return -1;
 					}
 				}

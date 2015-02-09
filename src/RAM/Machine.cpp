@@ -78,6 +78,7 @@ uint32_t Machine::run() {
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
 		while (m_currentOP != HALT) {
 			m_currentOP = m_program->program()[m_instPointer].first;
+			cout << "Operation: 0x" << hex << static_cast<int>(m_currentOP) << endl;
 
 			switch (m_currentOP & 0xE0) {
 			case 0x20: // ARITMÉTICAS
@@ -96,6 +97,13 @@ uint32_t Machine::run() {
 				m_currentOP = HALT;
 				break;
 			}
+			
+			cout << "--REGISTERS--" << endl;
+			for (auto it : showRegisters()) {
+				cout << dec << it << ", ";
+			}
+			cout << endl;
+			cin.get();
 		}
 
 		m_outputTape->save();
@@ -107,7 +115,7 @@ uint32_t Machine::run() {
 
 void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
 	int32_t tempOperand;
-
+	
 	switch (oper.first & 0x1C) {
 	case IMM:
 		tempOperand = oper.second;
@@ -144,13 +152,15 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
 
 		break;
 	}
+	
+	cout << " Operand: " << dec << tempOperand << endl;
 
 	++m_instPointer;
 }
 
 void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 	int32_t tempOperand;
-	printw("%d\n", oper.first);
+	//printw("%d\n", oper.first);
 
 	switch (oper.first & 0x1C) {
 	case IMM:
@@ -158,29 +168,47 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
 		break;
 
 	case DIRECT:
-		tempOperand = (*m_registers)[oper.second];
+ 		tempOperand = (*m_registers)[oper.second];
 		break;
 
 	case INDIRECT:
-		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
+ 		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
 	}
+	
+	cout << " Operand: " << dec << tempOperand << endl;
 
 	switch (oper.first & 0x43) {
 	case LOAD:
 		m_registers->setACC(tempOperand);
 		break;
 
+	case WRITE:
+		m_outputTape->write(tempOperand);
+		break;
+
 	case STORE:
+		switch (oper.first & 0x1C) {
+			case DIRECT:
+				tempOperand = oper.second;
+				break;
+			case INDIRECT:
+				tempOperand = (*m_registers)[oper.second];
+				break;
+		}
 		(*m_registers)[tempOperand] = m_registers->getACC();
 		break;
 
 	case READ:
+		switch (oper.first & 0x1C) {
+			case DIRECT:
+				tempOperand = oper.second;
+				break;
+			case INDIRECT:
+				tempOperand = (*m_registers)[oper.second];
+				break;
+		}
 		(*m_registers)[tempOperand] = m_inputTape->read();
-		break;
-
-	case WRITE:
-		m_outputTape->write(tempOperand);
 		break;
 	}
 
@@ -211,6 +239,8 @@ void Machine::jumpOps(std::pair<OPCode, int32_t> oper) {
 
 		break;
 	}
+	
+	cout << " Operand: " << m_instPointer << endl;
 }
 
 void Machine::debug() {

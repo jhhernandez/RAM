@@ -7,12 +7,14 @@
 
 enum Symbol {
         NONE = -1,
-        NTS_S = 0,
-        NTS_A,
-        NTS_B,
-        NTS_INST,
-        NTS_OPERAND,
-        TS_MARKER,
+		// NON TERMINAL SYMBOLS
+        NTS_S = 0, //< PROGRAM STARTING RULE
+        NTS_A,	//< PROGRAM RULE A
+        NTS_B,	//< PROGRAM RULE B
+        NTS_INST,	// INSTRUCTION
+        NTS_OPERAND,	// OPERAND
+		// TERMINAL SYMBOLS
+        TS_MARKER,	//
         TS_LABEL,
         TS_COMMENT,
         TS_INST_0,

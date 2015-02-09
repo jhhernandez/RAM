@@ -1,4 +1,0 @@
-	  READ 1		; leemos entrada a r[1]
-	  LOAD 1		; guardamos en acc
-	  STORE 2		; copiamos a r[2]
-bucle:	

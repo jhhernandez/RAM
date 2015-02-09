@@ -10,9 +10,18 @@ int main(int argc, char** argv) {
 	m.programFile("../test/test2.ram");
 	m.inputFile("../test/input");
 	m.outputFile("../test/output");
+
+	for (auto it : m.showInputTape()) {
+		cout << it << endl;
+	}
+	cout << endl << "ASSEMBLY" << endl;
+	for (auto it : m.assembly()) {
+		cout << "0x" << hex << static_cast<int>(it.first) << " " << dec << it.second << endl;
+	}
 	
-	UI ui(m);
-	ui.run();
+	m.run();
+// 	UI ui(m);
+// 	ui.run();
 }
 
 /*
