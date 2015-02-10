@@ -22,28 +22,31 @@
 
 using namespace std;
 
-OTape::OTape(const char* file) : Tape(file, ios_base::out) {
+OTape::OTape(const char* file) : Tape(file, ios_base::out)
+{
 }
 
 
-OTape::~OTape() {
+OTape::~OTape()
+{
 
 }
 
-void OTape::write(int32_t val) {
+void OTape::write(int32_t val)
+{
 	/*m_tape.resize(m_tape.size() + 1);
 	m_tape[m_position] = val;*/
 	m_tape.push_back(val);
 	right();
 }
 
-void OTape::save() {
+void OTape::save()
+{
 	fstream ofs(m_file.c_str());
-	if (ofs.is_open() && ofs.good()) {
-		for (vector<int32_t>::iterator i = m_tape.begin(); i != m_tape.end(); ++i) {
-			ofs << (*i);
-		}
-		ofs.flush();
-		ofs.close();
+	for (auto it : m_tape) {
+		ofs << it << endl;
 	}
+	ofs.flush();
+	ofs.close();
+
 }

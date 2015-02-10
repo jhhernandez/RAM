@@ -21,6 +21,18 @@
 
 using namespace std;
 
+FileNotFoundException::FileNotFoundException(const char* path) : m_path(path) {
+	
+}
+
+const char* FileNotFoundException::what() noexcept
+{
+	string tmp = "File ";
+	tmp += m_path;
+	tmp += " not found.";
+	return tmp.c_str();
+}
+
 Tape::Tape(const char* file, ios_base::openmode mode) : m_file(file), m_position(0) {
 }
 

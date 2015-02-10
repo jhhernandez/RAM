@@ -37,6 +37,8 @@ ITape::ITape(const char* file) : Tape(file, ios_base::in) {
 			m_tape.push_back(tmp);
 		}
 		ifs.close();
+	} else {
+		throw new FileNotFoundException(file);
 	}
 }
 

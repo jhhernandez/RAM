@@ -78,8 +78,6 @@ uint32_t Machine::run() {
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
 		while (m_currentOP != HALT) {
 			m_currentOP = m_program->program()[m_instPointer].first;
-			cout << "Operation: 0x" << hex << static_cast<int>(m_currentOP) << endl;
-
 			switch (m_currentOP & 0xE0) {
 			case 0x20: // ARITMÉTICAS
 				arithmeticOps(m_program->program()[m_instPointer]);
@@ -97,13 +95,6 @@ uint32_t Machine::run() {
 				m_currentOP = HALT;
 				break;
 			}
-			
-			cout << "--REGISTERS--" << endl;
-			for (auto it : showRegisters()) {
-				cout << dec << it << ", ";
-			}
-			cout << endl;
-			cin.get();
 		}
 
 		m_outputTape->save();
@@ -152,8 +143,6 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper) {
 
 		break;
 	}
-	
-	cout << " Operand: " << dec << tempOperand << endl;
 
 	++m_instPointer;
 }
@@ -175,8 +164,6 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper) {
  		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
 	}
-	
-	cout << " Operand: " << dec << tempOperand << endl;
 
 	switch (oper.first & 0x43) {
 	case LOAD:
@@ -239,8 +226,6 @@ void Machine::jumpOps(std::pair<OPCode, int32_t> oper) {
 
 		break;
 	}
-	
-	cout << " Operand: " << m_instPointer << endl;
 }
 
 void Machine::debug() {
@@ -249,7 +234,9 @@ void Machine::debug() {
 }
 
 void Machine::step() {
-	printw("%d %d\n", m_currentOP, m_program->program()[m_instPointer].second);
+	if (m_currentOP != HALT) {
+		printw("%d %d\n", m_currentOP, m_program->program()[m_instPointer].second);
+	}
 
 	switch (m_currentOP & 0xE0) {
 	case 0x20: // ARITMÉTICAS
@@ -265,6 +252,7 @@ void Machine::step() {
 		break;
 
 	default:
+		m_currentOP = HALT;
 		break;
 	}
 	

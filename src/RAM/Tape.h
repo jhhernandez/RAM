@@ -25,6 +25,14 @@
 #include <string>
 #include <stdint.h>
 
+class FileNotFoundException : public std::exception {
+public:
+	FileNotFoundException(const char* path);
+	const char* what() noexcept;
+private:
+	const char* m_path;
+};
+
 class Tape {
 public:
 	Tape(const char*, std::ios_base::openmode);

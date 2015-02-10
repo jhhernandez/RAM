@@ -90,7 +90,7 @@ void UI::event(int32_t ev) {
 			break;
 		}
 
-	} else {
+	} else { //FIXME
 		if (ev == static_cast<int32_t>('q')) {
 			menu();
 		}
@@ -153,8 +153,6 @@ void UI::trace() {
 	
 	while (m_next) {
 		m_machine->step();
-		//printw("%d\n", m_machine->state());
-		
 		event(getch());
 	}
 }
