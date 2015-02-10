@@ -97,10 +97,10 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 	/* LH RH Rule*/
 	map<Symbol, map<Symbol, uint32_t> > table;
-	stack<Symbol> symStack;
-	Symbol currSym;
+	stack<Symbol> symbol_stack;
+	Symbol current_symbol;
 	int32_t rule;
-	uint32_t line;
+	uint32_t line = 0;
 
 	// table setup
 	// NTS_S
@@ -127,119 +127,115 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 	table[NTS_OPERAND][TS_OP_DIRECT] = 13;
 	table[NTS_OPERAND][TS_OP_INDIRECT] = 14;
 
-	for (vector<vector<strSymPair> >::const_iterator i = program.begin(); i != program.end(); ++i) {
+	for (auto it : program) {
 		vector<strSymPair>::const_iterator j;
 
 		// stack init
-		while (!symStack.empty()) {
-			symStack.pop();
+		while (!symbol_stack.empty()) {
+			symbol_stack.pop();
 		}
 
-		symStack.push(TS_EOL);
-		symStack.push(NTS_S);
+		symbol_stack.push(TS_EOL);
+		symbol_stack.push(NTS_S);
 
-		j = (*i).begin();
-		line = i - program.begin();
-// 		cout << "Parsing line " << line << endl;
+		j = it.begin();
+// 		line = i - program.begin();
 
-		while (!symStack.empty()) {
-			currSym = (*j).second;
-// 			cout << "Current symbol: " << symToString(currSym) << endl;
-// 			cout << "Stack top: " << symToString(symStack.top()) << endl;
+		while (!symbol_stack.empty()) {
+			current_symbol = (*j).second;
 
-			if (currSym == symStack.top()) {
-// 				cout << "Matched symbols: " << symToString((*j).second) << endl;
+			if (current_symbol == symbol_stack.top()) {
+
 				++j;
-				symStack.pop();
+				symbol_stack.pop();
 			} else {
-				rule = table[symStack.top()][currSym];
-// 				cout << "Regla " << rule << endl;
+				rule = table[symbol_stack.top()][current_symbol];
 
 				switch (rule) {
 				case 1:
-					symStack.pop();
-					symStack.push(NTS_A);
-					symStack.push(TS_MARKER);
+					symbol_stack.pop();
+					symbol_stack.push(NTS_A);
+					symbol_stack.push(TS_MARKER);
 					break;
 
 				case 2:
-					symStack.pop();
-					symStack.push(NTS_B);
-					symStack.push(NTS_INST);
+					symbol_stack.pop();
+					symbol_stack.push(NTS_B);
+					symbol_stack.push(NTS_INST);
 					break;
 
 				case 3:
-					symStack.pop();
-					symStack.push(TS_COMMENT);
+					symbol_stack.pop();
+					symbol_stack.push(TS_COMMENT);
 					break;
 
 				case 4:
-					symStack.pop();
-					symStack.push(NTS_B);
-					symStack.push(NTS_INST);
+					symbol_stack.pop();
+					symbol_stack.push(NTS_B);
+					symbol_stack.push(NTS_INST);
 					break;
 
 				case 5:
-					symStack.pop();
-					symStack.push(TS_COMMENT);
+					symbol_stack.pop();
+					symbol_stack.push(TS_COMMENT);
 					break;
 
 				case 6:
-					symStack.pop();
+					symbol_stack.pop();
 					break;
 
 				case 7:
-					symStack.pop();
-					symStack.push(TS_COMMENT);
+					symbol_stack.pop();
+					symbol_stack.push(TS_COMMENT);
 					break;
 
 				case 8:
-					symStack.pop();
+					symbol_stack.pop();
 					break;
 
 				case 9:
-					symStack.pop();
-					symStack.push(TS_INST_0);
+					symbol_stack.pop();
+					symbol_stack.push(TS_INST_0);
 					break;
 
 				case 10:
-					symStack.pop();
-					symStack.push(TS_LABEL);
-					symStack.push(TS_INST_1_LAB);
+					symbol_stack.pop();
+					symbol_stack.push(TS_LABEL);
+					symbol_stack.push(TS_INST_1_LAB);
 					break;
 
 				case 11:
-					symStack.pop();
-					symStack.push(NTS_OPERAND);
-					symStack.push(TS_INST_1_OP);
+					symbol_stack.pop();
+					symbol_stack.push(NTS_OPERAND);
+					symbol_stack.push(TS_INST_1_OP);
 					break;
 
 				case 12:
-					symStack.pop();
-					symStack.push(TS_OP_IMM);
+					symbol_stack.pop();
+					symbol_stack.push(TS_OP_IMM);
 					break;
 
 				case 13:
-					symStack.pop();
-					symStack.push(TS_OP_DIRECT);
+					symbol_stack.pop();
+					symbol_stack.push(TS_OP_DIRECT);
 					break;
 
 				case 14:
-					symStack.pop();
-					symStack.push(TS_OP_INDIRECT);
+					symbol_stack.pop();
+					symbol_stack.push(TS_OP_INDIRECT);
 					break;
 
 				default:
 					cout << "Parsing failed at line " << line << ": ";
 
-					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
+					for (vector<strSymPair>::const_iterator k = it.begin(); k != it.end(); ++k) {
 						cout << (*k).first << " ";
 					}
 
 					cout << endl;
 					cout << "\t\t\t\t"; // FIXME: Deja >= 25 espacios
 
-					for (vector<strSymPair>::const_iterator k = (*i).begin(); k != (*i).end(); ++k) {
+					for (vector<strSymPair>::const_iterator k = it.begin(); k != it.end(); ++k) {
 						if ((*k) == (*j)) {
 							cout << "^" << endl;
 						} else {
@@ -255,11 +251,8 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 				}
 			}
 		}
-
-// 		cout << "line parsed" << endl << endl;
 	}
 
-// 	cout << "Done parsing" << endl;
 	return 0;
 }
 
@@ -323,15 +316,14 @@ int32_t Parser::readFile(const char* file) {
 	}
 
 	if (parse(program) == 0) {
-		for (std::vector<std::vector<strSymPair> >::iterator i = program.begin(); i != program.end(); ++i) {
-			if ((*i)[0].second != TS_COMMENT) {
-				m_program.push_back((*i));
+		for (auto it : program) {
+			if (it[0].second != TS_COMMENT) {
+				m_program.push_back(it);
 
-				if ((*i)[0].second == TS_MARKER) {
-					if (m_labels.count((*i)[0].first.substr(0, (*i)[0].first.size() - 1)) == 0) {
-						m_labels[(*i)[0].first.substr(0, (*i)[0].first.size() - 1)] = m_program.size() - 1;
+				if (it[0].second == TS_MARKER) {
+					if (m_labels.count(it[0].first.substr(0, it[0].first.size() - 1)) == 0) {
+						m_labels[it[0].first.substr(0, it[0].first.size() - 1)] = m_program.size() - 1;
 					} else {
-// 						cout << "La etiqueta " << (*i)[0].first << " ya existe" << endl;
 						return -1;
 					}
 				}

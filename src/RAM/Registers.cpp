@@ -20,7 +20,7 @@
 #include "Registers.h"
 
 Registers::Registers() {
-	m_register.resize(10);
+	m_register.resize(m_size);
 }
 
 Registers::~Registers() {

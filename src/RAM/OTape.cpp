@@ -34,8 +34,6 @@ OTape::~OTape()
 
 void OTape::write(int32_t val)
 {
-	/*m_tape.resize(m_tape.size() + 1);
-	m_tape[m_position] = val;*/
 	m_tape.push_back(val);
 	right();
 }

@@ -132,9 +132,9 @@ void UI::registers() {
 	printw("Registros\n\n");
 	attroff(A_BOLD);
 	
-	for (vector<int32_t>::const_iterator i = m_machine->showRegisters().begin();
-	     i != m_machine->showRegisters().end(); ++i) {
-		printw("R[%d] = %d\n", i - m_machine->showRegisters().begin(),(*i));
+	int i = 0;
+	for (auto it : m_machine->showRegisters()) {
+		printw("R[%d] = %d\n", i++, it);
 	}
 }
 
@@ -164,9 +164,9 @@ void UI::output() {
 	printw("Cinta de salida\n\n");
 	attroff(A_BOLD);
 	
-	for (vector<int32_t>::const_iterator i = m_machine->showOutputTape().begin();
-	     i != m_machine->showOutputTape().end(); ++i) {
-		printw("%d\n", (*i));
+	for (auto it : m_machine->showOutputTape())
+	{
+		printw("%d\n", it);
 	}
 }
 
@@ -177,9 +177,8 @@ void UI::input() {
 	printw("Cinta de entrada\n\n");
 	attroff(A_BOLD);
 	
-	for (vector<int32_t>::const_iterator i = m_machine->showInputTape().begin();
-	     i != m_machine->showInputTape().end(); ++i) {
-		printw("%d\n", (*i));
+	for (auto it : m_machine->showInputTape()) {
+		printw("%d\n", it);
 	}
 }
 
@@ -199,15 +198,11 @@ void UI::disassembler() {
 	
 	clear();
 	
-	for (vector<vector<strSymPair> >::const_iterator i = m_machine->showProgram().begin();
-	     i != m_machine->showProgram().end(); ++i) {
-		printw("I[%d] ", i - m_machine->showProgram().begin());
-		for (vector<strSymPair>::const_iterator j = (*i).begin();
-		     j != (*i).end(); ++j) {
-			printw("%s ", (*j).first.c_str());
-// 			if ((*j).second == TS_LABEL) {
-// 				printw("(%d)", m_machine->showLabels()[(*j).first]);
-// 			}
+	int i = 0;
+	for (auto it : m_machine->showProgram()) {
+		printw("I[%d] ", i++);
+		for (auto itt : it) {
+			printw("%s ", itt.first.c_str());
 		}
 		printw("\n");
 	}

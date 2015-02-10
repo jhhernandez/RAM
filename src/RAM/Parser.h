@@ -46,11 +46,11 @@ public:
 	 * \return 0 si el parseo se completa
 	 */
 	int32_t parse(std::vector<std::vector<strSymPair> >);
-	
+
 	const std::vector<std::vector<strSymPair> >& program() {
 		return m_program;
 	}
-	
+
 	const std::map<std::string, uint32_t>& labels() {
 		return m_labels;
 	}

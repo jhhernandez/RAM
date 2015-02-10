@@ -42,36 +42,33 @@ Program::~Program() {
 }
 
 void Program::assemble() {
-	uint32_t line;
+	uint32_t line = 0;
 	OPCode tmpOP;
 	int32_t tmpValue;
-
-	for (vector<vector<strSymPair> >::iterator i = m_program.begin();
-	                i != m_program.end(); ++i) {
-		line = i - m_program.begin();
+	
+	for (auto it : m_program) {
 		tmpValue = 0;
 
-		for (vector<strSymPair>::iterator j = (*i).begin();
-		                j != (*i).end(); ++j) {
-			switch ((*j).second) {
+		for (auto itt : it) {
+			switch (itt.second) {
 			case TS_INST_0:
 				tmpOP = HALT;
 				break;
 
 			case TS_INST_1_OP:
-				if ((*j).first == "ADD") {
+				if (itt.first == "ADD") {
 					tmpOP = ADD;
-				} else if ((*j).first == "SUB") {
+				} else if (itt.first == "SUB") {
 					tmpOP = SUB;
-				} else if ((*j).first == "MULT") {
+				} else if (itt.first == "MULT") {
 					tmpOP = MULT;
-				} else if((*j).first == "DIV") {
+				} else if(itt.first == "DIV") {
 					tmpOP = DIV;
-				} else if ((*j).first == "LOAD") {
+				} else if (itt.first == "LOAD") {
 					tmpOP = LOAD;
-				} else if ((*j).first == "STORE") {
+				} else if (itt.first == "STORE") {
 					tmpOP = STORE;
-				} else if ((*j).first == "READ") {
+				} else if (itt.first == "READ") {
 					tmpOP = READ;
 				} else {
 					tmpOP = WRITE;
@@ -80,9 +77,9 @@ void Program::assemble() {
 				break;
 
 			case TS_INST_1_LAB:
-				if ((*j).first == "JUMP") {
+				if (itt.first == "JUMP") {
 					tmpOP = JUMP;
-				} else if ((*j).first == "JGTZ") {
+				} else if (itt.first == "JGTZ") {
 					tmpOP = JGTZ;
 				} else {
 					tmpOP = JZERO;
@@ -92,25 +89,25 @@ void Program::assemble() {
 
 			case TS_OP_IMM:
 				tmpOP = static_cast<OPCode>(tmpOP | IMM);
-				stringstream((*j).first.substr(1, (*j).first.size() - 1)) >> tmpValue;
+				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 
 			case TS_OP_DIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | DIRECT);
-				stringstream((*j).first) >> tmpValue;
+				stringstream(itt.first) >> tmpValue;
 				break;
 
 			case TS_OP_INDIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | INDIRECT);
-				stringstream((*j).first.substr(1, (*j).first.size() - 1)) >> tmpValue;
+				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 
 			case TS_LABEL:
-				tmpValue = m_labels[(*j).first];
+				tmpValue = m_labels[itt.first];
 				break;
 			}
 		}
 
-		m_assembledProgram[line] = pair<OPCode, int32_t>(tmpOP, tmpValue);
+		m_assembledProgram[line++] = pair<OPCode, int32_t>(tmpOP, tmpValue);
 	}
 }

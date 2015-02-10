@@ -8,13 +8,6 @@ add_library(
  	Machine
  	SHARED
  	RAM/Machine.cpp
-# 	RAM/Registers.cpp
-# 	RAM/ITape.cpp
-# 	RAM/OTape.cpp
-# 	RAM/Tape.cpp
-# 	RAM/Program.cpp
-# 	RAM/Parser.cpp
-# 	includes.cpp
 )
 
 add_library(

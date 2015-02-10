@@ -34,6 +34,11 @@ class OTape;
 
 class Machine {
 public:
+	enum IDT {
+		ZERO_DIV = 0x0,
+		OVERFLOW = 0x04,
+	};
+	
 	Machine();
 	~Machine();
 	uint32_t programFile(const char*);
@@ -58,8 +63,8 @@ public:
 		return m_program->labels();
 	}
 	
-	const char* state() {
-		return m_machineState.c_str();
+	IDT state() {
+		return m_machineState;
 	}
 	
 	const std::vector<int32_t>& showInputTape() {
@@ -72,7 +77,8 @@ public:
 
 	void step();
 private:
-	static const uint32_t MAX_OPERAND_SIZE = 256;
+	static const int32_t OPERAND_UPPER_BOUND = 65536;
+	static const int32_t OPERAND_LOWER_BOUND = -65535;
 
 	Program* m_program;
 	Registers* m_registers;
@@ -80,7 +86,7 @@ private:
 	OTape* m_outputTape;
 	uint32_t m_instPointer;
 	OPCode m_currentOP;
-	std::string m_machineState;
+	IDT m_machineState;
 
 	void arithmeticOps(std::pair<OPCode, int32_t>);
 	void registerOps(std::pair<OPCode, int32_t>);

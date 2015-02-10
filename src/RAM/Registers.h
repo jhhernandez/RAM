@@ -21,7 +21,8 @@
 #define REGISTERS_H
 
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
+#include <cstdlib>
 
 class Registers {
 public:
@@ -33,7 +34,9 @@ public:
 	
 	void setACC(int32_t);
 	int32_t& operator[] (uint32_t pos) {
-		return m_register[pos];
+		if (pos >= 1 && pos < m_size) {
+			return m_register[pos];
+		}
 	}
 	
 	int32_t getACC() {
@@ -41,6 +44,7 @@ public:
 	}
 private:
 	std::vector<int32_t> m_register;
+	static const size_t m_size = 10;
 };
 
 #endif // REGISTERS_H
