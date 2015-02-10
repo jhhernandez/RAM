@@ -37,25 +37,10 @@ Machine::Machine() :
 }
 
 Machine::~Machine() {
-	if (m_program != NULL) {
-		delete m_program;
-		m_program = NULL;
-	}
-
-	if (m_inputTape != NULL) {
-		delete m_inputTape;
-		m_inputTape = NULL;
-	}
-
-	if (m_outputTape != NULL) {
-		delete m_outputTape;
-		m_outputTape = NULL;
-	}
-
-	if (m_registers != NULL) {
-		delete m_registers;
-		m_registers = NULL;
-	}
+	delete m_program;
+	delete m_inputTape;
+	delete m_outputTape;
+	delete m_registers;
 }
 
 uint32_t Machine::programFile(const char* file) {

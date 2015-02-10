@@ -15,11 +15,18 @@ find_package(Curses REQUIRED)
 
 if(Boost_FOUND)
         include_directories(${Boost_INCLUDE_DIRS})
-        set(BOOST_REGEX_LIB ${Boost_LIBRARY_DIRS}/libboost_regex.so)
+		find_library(
+			BOOST_REGEX_LIB
+			libboost_regex.so
+			PATHS ${Boost_LIBRARY_DIRS}
+		)
 endif(Boost_FOUND)
 
 if(CURSES_FOUND)
-    set(NCURSES_LIBRARY /usr/lib/libncurses.so)
+	find_library(
+		NCURSES_LIBRARY
+		libncurses.so
+	)
 endif(CURSES_FOUND)
 
 add_executable(ram main.cpp)
@@ -29,7 +36,7 @@ target_link_libraries(
 	${BOOST_REGEX_LIB}
 	Machine
 	${NCURSES_LIBRARY}
-        UI
+	UI
 )
 
 install(TARGETS ram RUNTIME DESTINATION bin)
