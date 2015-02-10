@@ -27,23 +27,25 @@ enum Symbol {
         TS_EOL
 };
 
-typedef unsigned char OPCode;
+//typedef unsigned char OPCode;
 
-const OPCode INDIRECT	= 0x4;	// 4
-const OPCode DIRECT	= 0x8;	// 8
-const OPCode IMM	= 0x10;	// 16
-const OPCode ADD	= 0x20;	// 32
-const OPCode SUB	= 0x21;	// 33
-const OPCode MULT	= 0x22;	// 34
-const OPCode DIV	= 0x23;	// 35
-const OPCode LOAD	= 0x40;	// 64
-const OPCode STORE	= 0x41;	// 65
-const OPCode READ	= 0x42;	// 66
-const OPCode WRITE	= 0x43;	// 67
-const OPCode JUMP	= 0x81;	// 129
-const OPCode JGTZ	= 0x82;	// 130
-const OPCode JZERO	= 0x84;	// 132
-const OPCode HALT	= 0x00;
+enum OPCode {
+	HALT = 0x0,
+	INDIRECT = 0x4, 
+	DIRECT = 0x8,
+	IMM = 0x10,
+	ADD = 0x20,
+	SUB = 0x21,
+	MULT = 0x22,
+	DIV = 0x23,
+	LOAD = 0x40,
+	STORE = 0x41,
+	READ = 0x42,
+	WRITE = 0x43,
+	JUMP = 0x80,
+	JGTZ = 0x81,
+	JZERO = 0x82
+};
 
 typedef std::pair<std::string, Symbol> strSymPair;
 typedef std::pair<Symbol, int32_t> symRulePair;

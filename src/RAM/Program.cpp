@@ -91,17 +91,17 @@ void Program::assemble() {
 				break;
 
 			case TS_OP_IMM:
-				tmpOP |= IMM;
+				tmpOP = static_cast<OPCode>(tmpOP | IMM);
 				stringstream((*j).first.substr(1, (*j).first.size() - 1)) >> tmpValue;
 				break;
 
 			case TS_OP_DIRECT:
-				tmpOP |= DIRECT;
+				tmpOP = static_cast<OPCode>(tmpOP | DIRECT);
 				stringstream((*j).first) >> tmpValue;
 				break;
 
 			case TS_OP_INDIRECT:
-				tmpOP |= INDIRECT;
+				tmpOP = static_cast<OPCode>(tmpOP | INDIRECT);
 				stringstream((*j).first.substr(1, (*j).first.size() - 1)) >> tmpValue;
 				break;
 
