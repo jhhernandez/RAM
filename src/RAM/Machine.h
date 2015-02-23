@@ -84,7 +84,7 @@ private:
 	Registers* m_registers;
 	ITape* m_inputTape;
 	OTape* m_outputTape;
-	uint32_t m_instPointer;
+	uint32_t m_instructionPointer;
 	OPCode m_currentOP;
 	IDT m_machineState;
 

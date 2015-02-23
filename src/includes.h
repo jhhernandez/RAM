@@ -50,6 +50,6 @@ enum OPCode {
 typedef std::pair<std::string, Symbol> strSymPair;
 typedef std::pair<Symbol, int32_t> symRulePair;
 
-std::string symToString(Symbol);
+const std::string& symToString(Symbol);
 
 #endif

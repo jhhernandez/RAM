@@ -30,7 +30,7 @@
 using namespace std;
 
 Machine::Machine() :
-	m_program(NULL), m_inputTape(NULL), m_outputTape(NULL), m_instPointer(0)
+	m_program(NULL), m_inputTape(NULL), m_outputTape(NULL), m_instructionPointer(0)
 {
 	m_registers = new Registers;
 }
@@ -60,24 +60,24 @@ uint32_t Machine::outputFile(const char* file)
 
 uint32_t Machine::run()
 {
-	m_instPointer = 0;
+	m_instructionPointer = 0;
 
-	m_currentOP = m_program->program()[m_instPointer].first;
+	m_currentOP = m_program->program()[m_instructionPointer].first;
 
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
 		while (m_currentOP != HALT) {
-			m_currentOP = m_program->program()[m_instPointer].first;
+			m_currentOP = m_program->program()[m_instructionPointer].first;
 			switch (m_currentOP & 0xE0) {
 			case 0x20: // ARITMÉTICAS
-				arithmeticOps(m_program->program()[m_instPointer]);
+				arithmeticOps(m_program->program()[m_instructionPointer]);
 				break;
 
 			case 0x40: // REGISTROS
-				registerOps(m_program->program()[m_instPointer]);
+				registerOps(m_program->program()[m_instructionPointer]);
 				break;
 
 			case  0x80: // SALTOS
-				jumpOps(m_program->program()[m_instPointer]);
+				jumpOps(m_program->program()[m_instructionPointer]);
 				break;
 
 			default:
@@ -154,7 +154,7 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 		break;
 	}
 
-	++m_instPointer;
+	++m_instructionPointer;
 }
 
 void Machine::registerOps(std::pair<OPCode, int32_t> oper)
@@ -210,30 +210,30 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		break;
 	}
 
-	++m_instPointer;
+	++m_instructionPointer;
 }
 
 void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 {
 	switch (oper.first & 0x87) {
 	case JUMP:
-		m_instPointer = oper.second;
+		m_instructionPointer = oper.second;
 		break;
 
 	case JGTZ:
 		if (m_registers->getACC() > 0) {
-			m_instPointer = oper.second;
+			m_instructionPointer = oper.second;
 		} else {
-			++m_instPointer;
+			++m_instructionPointer;
 		}
 
 		break;
 
 	case JZERO:
 		if (m_registers->getACC() == 0) {
-			m_instPointer = oper.second;
+			m_instructionPointer = oper.second;
 		} else {
-			++m_instPointer;
+			++m_instructionPointer;
 		}
 
 		break;
@@ -242,27 +242,27 @@ void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 
 void Machine::debug()
 {
-	m_instPointer = 0;
-	m_currentOP = m_program->program()[m_instPointer].first;
+	m_instructionPointer = 0;
+	m_currentOP = m_program->program()[m_instructionPointer].first;
 }
 
 void Machine::step()
 {
 	if (m_currentOP != HALT) {
-		printw("%d %d\n", m_currentOP, m_program->program()[m_instPointer].second);
+		printw("%d %d\n", m_currentOP, m_program->program()[m_instructionPointer].second);
 	}
 
 	switch (m_currentOP & 0xE0) {
 	case 0x20: // ARITMÉTICAS
-		arithmeticOps(m_program->program()[m_instPointer]);
+		arithmeticOps(m_program->program()[m_instructionPointer]);
 		break;
 
 	case 0x40: // REGISTROS
-		registerOps(m_program->program()[m_instPointer]);
+		registerOps(m_program->program()[m_instructionPointer]);
 		break;
 
 	case  0x80: // SALTOS
-		jumpOps(m_program->program()[m_instPointer]);
+		jumpOps(m_program->program()[m_instructionPointer]);
 		break;
 
 	default:
@@ -270,6 +270,6 @@ void Machine::step()
 		break;
 	}
 
-	m_currentOP = m_program->program()[m_instPointer].first;
+	m_currentOP = m_program->program()[m_instructionPointer].first;
 }
 

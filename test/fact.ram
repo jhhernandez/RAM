@@ -1,13 +1,16 @@
-      READ 1
-      LOAD 1
-      SUB 1
-      STORE 3
-      LOAD 1
-loop: MULT 3
-      STORE 2
-      SUB 1
-      STORE 3
-      LOAD 2
-      JGTZ loop
-      WRITE 2
-end: HALT
+           READ 1
+           LOAD 1
+           STORE 3
+           SUB =1
+           STORE 2
+test:      JGTZ mult
+           JUMP end
+mult:      LOAD 3
+           MULT 2
+           STORE 3
+condition: LOAD 2
+           SUB =1
+           STORE 2
+           JUMP test
+end:       WRITE 3
+           HALT

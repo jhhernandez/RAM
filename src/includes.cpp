@@ -2,7 +2,7 @@
 
 using namespace std;
 
-string symToString(Symbol sym) {
+const string& symToString(Symbol sym) {
 	string str;
 
 	switch (sym) {
@@ -59,5 +59,5 @@ string symToString(Symbol sym) {
 		break;
 	}
 
-	return str;
+	return *new string(move(str));
 }
