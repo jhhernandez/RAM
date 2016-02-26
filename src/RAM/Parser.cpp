@@ -22,7 +22,7 @@
 #include <iostream>
 #include <fstream>
 #include <stack>
-#include <boost/regex.hpp>
+#include <regex>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
