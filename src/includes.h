@@ -47,6 +47,10 @@ enum OPCode {
 	JZERO = 0x82
 };
 
+#define ARITHMETIC ADD
+#define REGISTER LOAD
+#define BRANCH JUMP
+
 typedef std::pair<std::string, Symbol> strSymPair;
 typedef std::pair<Symbol, int32_t> symRulePair;
 

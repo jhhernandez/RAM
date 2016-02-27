@@ -12,7 +12,7 @@ public:
 	void run();
 
 private:
-	typedef enum{
+	typedef enum {
 	        MENU,
 		REGS,
 	        TRACE,
