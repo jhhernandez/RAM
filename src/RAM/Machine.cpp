@@ -110,6 +110,9 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 	case OPCode::INDIRECT:
 		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
+
+	default:
+		break;
 	}
 
 	switch (oper.first & OPMask::OPERATION) {
@@ -156,6 +159,9 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 		}
 
 		break;
+
+	default:
+		break;
 	}
 
 	++m_instructionPointer;
@@ -178,6 +184,9 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 	case OPCode::INDIRECT:
 		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
+
+	default:
+		break;
 	}
 
 	switch (oper.first & OPMask::REGISTER) {
@@ -198,6 +207,8 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		case OPCode::INDIRECT:
 			tempOperand = (*m_registers)[oper.second];
 			break;
+		default:
+			break;
 		}
 
 		(*m_registers)[tempOperand] = m_registers->getACC();
@@ -212,9 +223,13 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		case OPCode::INDIRECT:
 			tempOperand = (*m_registers)[oper.second];
 			break;
+		default:
+			break;
 		}
 
 		(*m_registers)[tempOperand] = m_inputTape->read();
+		break;
+	default:
 		break;
 	}
 
@@ -244,6 +259,8 @@ void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 			++m_instructionPointer;
 		}
 
+		break;
+	default:
 		break;
 	}
 }

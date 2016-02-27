@@ -103,6 +103,8 @@ void Program::assemble()
 			case Symbol::TS_LABEL:
 				tmpValue = m_labels[jt.first];
 				break;
+			default:
+				break;
 			}
 		}
 

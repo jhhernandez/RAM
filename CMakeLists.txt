@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 project(ram)
 
 set(CMAKE_BUILD_TYPE DEBUG)
-list(APPEND CMAKE_CXX_FLAGS "-std=c++14")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++14 -Wall")
 
 include_directories(src/)
 include_directories(src/RAM)

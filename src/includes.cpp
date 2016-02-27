@@ -57,6 +57,8 @@ string symToString(Symbol sym) {
 	case Symbol::TS_OP_INDIRECT:
 		str = "Symbol::TS_OP_INDIRECT";
 		break;
+	default:
+		break;
 	}
 
 	return str;
