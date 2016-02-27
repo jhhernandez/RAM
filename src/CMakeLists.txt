@@ -1,42 +1,19 @@
-add_library(
-	Tape
-	SHARED
-	RAM/Tape.cpp
-)
-
-add_library(
- 	Machine
- 	SHARED
+set (MACHINE_SOURCES
+	includes.cpp
  	RAM/Machine.cpp
-)
-
-add_library(
-	Register
-	SHARED
+ 	RAM/Tape.cpp
 	RAM/Registers.cpp
-)
-
-add_library(
-	Program
-	SHARED
 	RAM/Program.cpp
 	RAM/Parser.cpp
-	includes.cpp
-)
-
-add_library(
-	Tapes
-	SHARED
 	RAM/Tape.cpp
 	RAM/ITape.cpp
 	RAM/OTape.cpp
 )
 
-target_link_libraries(
-	Machine
-	Register
-	Tapes
-	Program
+add_library(
+ 	Machine
+ 	SHARED
+ 	${MACHINE_SOURCES}
 )
 
 add_library(
