@@ -47,6 +47,14 @@ enum class OPCode: unsigned char {
 	JZERO = 0x82
 };
 
+enum class OPMask: unsigned char {
+	TYPE = 0xE0,
+	REDIRECTION = 0x1C,
+	REGISTER = 0x43,
+	OPERATION = 0x23,
+	BRANCH = 0x87
+};
+
 constexpr auto ARITHMETIC = OPCode::ADD;
 constexpr auto REGISTER = OPCode::LOAD;
 constexpr auto BRANCH = OPCode::JUMP;
@@ -56,7 +64,7 @@ typedef std::pair<Symbol, int32_t> symRulePair;
 
 const std::string& symToString(Symbol);
 
-OPCode operator&(OPCode _code, int _mask);
+OPCode operator&(OPCode _code, OPMask _mask);
 unsigned char operator|(OPCode _a, OPCode _b);
 
 
