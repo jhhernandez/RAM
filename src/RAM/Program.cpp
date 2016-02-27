@@ -24,28 +24,29 @@
 
 using namespace std;
 
-Program::Program(const char* cstr) {
-	Parser p;
+Program::Program(const char* cstr)
+{
+	Parser p{string{cstr}};
 
-	if (p.readFile(cstr) == 0) {
-		m_program = p.program();
-		m_labels = p.labels();
-		
-		m_assembledProgram.resize(m_program.size());
+	m_program = p.program();
+	m_labels = p.labels();
 
-		assemble();
-	}
+	m_assembledProgram.resize(m_program.size());
+
+	assemble();
 }
 
-Program::~Program() {
+Program::~Program()
+{
 
 }
 
-void Program::assemble() {
+void Program::assemble()
+{
 	uint32_t line = 0;
 	OPCode tmpOP;
 	int32_t tmpValue;
-	
+
 	for (auto it : m_program) {
 		tmpValue = 0;
 
@@ -62,7 +63,7 @@ void Program::assemble() {
 					tmpOP = OPCode::SUB;
 				} else if (itt.first == "MULT") {
 					tmpOP = OPCode::MULT;
-				} else if(itt.first == "DIV") {
+				} else if (itt.first == "DIV") {
 					tmpOP = OPCode::DIV;
 				} else if (itt.first == "LOAD") {
 					tmpOP = OPCode::LOAD;

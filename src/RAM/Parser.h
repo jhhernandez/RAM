@@ -24,28 +24,14 @@
 
 #include <vector>
 #include <map>
+#include <string>
 
 class Parser {
 public:
 	/**
 	 * \fn CTOR
 	 */
-	Parser();
-	/**
-	 * \fn DTOR
-	 */
-	~Parser();
-	/**
-	 * \fn readFile(const char* file)
-	 * \param file Ruta del archivo a leer
-	 * \return Devuelve 0 en caso de lectura exitosa
-	 */
-	int32_t readFile(const char*);
-	/**
-	 * \fn parse()
-	 * \return 0 si el parseo se completa
-	 */
-	int32_t parse(std::vector<std::vector<strSymPair> >);
+	Parser(const std::string& _file);
 
 	const std::vector<std::vector<strSymPair> >& program() {
 		return m_program;
@@ -65,9 +51,21 @@ private:
 	/**
 	 * \fn CCTOR
 	 */
-	Parser& operator=(const Parser& other);
 	const std::vector<strSymPair> tokenize(const std::string&);
 	Symbol lexer(const std::string&);
+
+	/**
+	 * \fn readFile(const char* file)
+	 * \param file Ruta del archivo a leer
+	 * \return Devuelve 0 en caso de lectura exitosa
+	 */
+	int32_t readFile(const std::string& _file);
+
+	/**
+	* \fn parse()
+	* \return 0 si el parseo se completa
+	*/
+	int32_t parse(std::vector<std::vector<strSymPair>>);
 };
 
 #endif // PROGRAM_H

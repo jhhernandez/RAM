@@ -25,18 +25,29 @@
 #include <regex>
 #include <boost/algorithm/string.hpp>
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::ifstream;
+using std::vector;
+using std::regex;
+using std::regex_match;
+using std::cout;
+using std::cin;
+using std::endl;
+using std::map;
+using std::stack;
 
-Parser::Parser() {
+using boost::trim_left;
+using boost::trim_right;
+
+Parser::Parser(const std::string& _file)
+{
 	m_program.resize(0);
+
+	readFile(_file.c_str());
 }
 
-Parser::~Parser() {
-
-}
-
-const vector<strSymPair> Parser::tokenize(const string& str)  {
+const vector<strSymPair> Parser::tokenize(const string& str)
+{
 	vector<strSymPair> tokens;
 	string substr;
 	int32_t wspos;
@@ -59,16 +70,17 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 			int32_t tp_start;
 			int32_t tp_end;
 			string label;
-			
+
 			label = str.substr(wspos, word_end - wspos);
 			trim_left(label);
 			trim_right(label);
-			
+
 			tp_start = str.find_first_not_of(" ", word_end);
 			tp_end = str.find_first_of(" ", tp_start);
 
 			if (tp_start >= 0 && tp_start < str.size() && tp_end >= 0 && tp_end < str.size()) {
 				substr = str.substr(tp_start, tp_end - tp_start);
+
 				if (lexer(substr) == Symbol::TS_TP) {
 					tokens.push_back(strSymPair(label + ":", Symbol::TS_MARKER));
 					i = tp_end;
@@ -81,7 +93,7 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
 			     " no corresponde a ningún símbolo válido" << endl;
 		}
-		
+
 		substr = str.substr(wspos, word_end - wspos);
 		trim_right(substr);
 		trim_left(substr);
@@ -94,9 +106,11 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 	return tokens;
 }
 
-int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
+// FIXME: use exceptions instead of return values
+int32_t Parser::parse(std::vector<std::vector<strSymPair>> program)
+{
 	/* LH RH Rule*/
-	map<Symbol, map<Symbol, uint32_t> > table;
+	map<Symbol, map<Symbol, uint32_t>> table;
 	stack<Symbol> symbol_stack;
 	Symbol current_symbol;
 	int32_t rule;
@@ -226,6 +240,11 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 					break;
 
 				default:
+					/*
+					 * FIXME: should not print any output but
+					 * throw with some meaningful message
+					 */
+					
 					cout << "Parsing failed at line " << line << ": ";
 
 					for (vector<strSymPair>::const_iterator k = it.begin(); k != it.end(); ++k) {
@@ -256,7 +275,8 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 	return 0;
 }
 
-Symbol Parser::lexer(const string& str) {
+Symbol Parser::lexer(const string& str)
+{
 	regex label("\\s*[_a-z][a-z]*\\s*");
 	regex marker("^\\s*[_a-z][a-z]*\\s*:\\s*");
 	regex instruction("\\s*(?:READ|WRITE|LOAD|STORE|ADD|SUB|DIV|MULT|HALT|JUMP|JGTZ|JZERO)\\s*");
@@ -297,9 +317,10 @@ Symbol Parser::lexer(const string& str) {
 	}
 }
 
-int32_t Parser::readFile(const char* file) {
+int32_t Parser::readFile(const string& _file)
+{
 	std::vector<std::vector<strSymPair> > program;
-	ifstream ifs(file);
+	ifstream ifs(_file);
 	string line;
 	vector<string> vecline;
 
@@ -315,22 +336,24 @@ int32_t Parser::readFile(const char* file) {
 		}
 	}
 
-	if (parse(program) == 0) {
-		for (auto it : program) {
-			if (it[0].second != Symbol::TS_COMMENT) {
-				m_program.push_back(it);
+	parse(program);
 
-				if (it[0].second == Symbol::TS_MARKER) {
-					if (m_labels.count(it[0].first.substr(0, it[0].first.size() - 1)) == 0) {
-						m_labels[it[0].first.substr(0, it[0].first.size() - 1)] = m_program.size() - 1;
-					} else {
-						return -1;
-					}
+	/*
+	 * strips comments and replaces labels with instruction line for branching
+	 * to build the m_program object
+	 */
+	for (const auto & it : program) {
+		if (it[0].second != Symbol::TS_COMMENT) {
+			m_program.push_back(it);
+
+			if (it[0].second == Symbol::TS_MARKER) {
+				if (m_labels.count(it[0].first.substr(0, it[0].first.size() - 1)) == 0) {
+					m_labels[it[0].first.substr(0, it[0].first.size() - 1)] = m_program.size() - 1;
+				} else {
+					return -1;
 				}
 			}
 		}
-	} else {
-		return -1;
 	}
 
 	return 0;
