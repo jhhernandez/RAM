@@ -52,53 +52,53 @@ void Program::assemble() {
 		for (auto itt : it) {
 			switch (itt.second) {
 			case Symbol::TS_INST_0:
-				tmpOP = HALT;
+				tmpOP = OPCode::HALT;
 				break;
 
 			case Symbol::TS_INST_1_OP:
 				if (itt.first == "ADD") {
-					tmpOP = ADD;
+					tmpOP = OPCode::ADD;
 				} else if (itt.first == "SUB") {
-					tmpOP = SUB;
+					tmpOP = OPCode::SUB;
 				} else if (itt.first == "MULT") {
-					tmpOP = MULT;
+					tmpOP = OPCode::MULT;
 				} else if(itt.first == "DIV") {
-					tmpOP = DIV;
+					tmpOP = OPCode::DIV;
 				} else if (itt.first == "LOAD") {
-					tmpOP = LOAD;
+					tmpOP = OPCode::LOAD;
 				} else if (itt.first == "STORE") {
-					tmpOP = STORE;
+					tmpOP = OPCode::STORE;
 				} else if (itt.first == "READ") {
-					tmpOP = READ;
+					tmpOP = OPCode::READ;
 				} else {
-					tmpOP = WRITE;
+					tmpOP = OPCode::WRITE;
 				}
 
 				break;
 
 			case Symbol::TS_INST_1_LAB:
 				if (itt.first == "JUMP") {
-					tmpOP = JUMP;
+					tmpOP = OPCode::JUMP;
 				} else if (itt.first == "JGTZ") {
-					tmpOP = JGTZ;
+					tmpOP = OPCode::JGTZ;
 				} else {
-					tmpOP = JZERO;
+					tmpOP = OPCode::JZERO;
 				}
 
 				break;
 
 			case Symbol::TS_OP_IMM:
-				tmpOP = static_cast<OPCode>(tmpOP | IMM);
+				tmpOP = static_cast<OPCode>(tmpOP | OPCode::IMM);
 				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_DIRECT:
-				tmpOP = static_cast<OPCode>(tmpOP | DIRECT);
+				tmpOP = static_cast<OPCode>(tmpOP | OPCode::DIRECT);
 				stringstream(itt.first) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_INDIRECT:
-				tmpOP = static_cast<OPCode>(tmpOP | INDIRECT);
+				tmpOP = static_cast<OPCode>(tmpOP | OPCode::INDIRECT);
 				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 

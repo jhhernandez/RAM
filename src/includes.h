@@ -5,7 +5,7 @@
 #include <bits/stl_pair.h>
 #include <stdint.h>
 
-enum class Symbol: char {
+enum class Symbol {
         NONE = -1,
 		// NON TERMINAL SYMBOLS
         NTS_S = 0, //< PROGRAM STARTING RULE
@@ -29,7 +29,7 @@ enum class Symbol: char {
 
 //typedef unsigned char OPCode;
 
-enum OPCode {
+enum class OPCode: unsigned char {
 	HALT = 0x0,
 	INDIRECT = 0x4, 
 	DIRECT = 0x8,
@@ -55,5 +55,9 @@ typedef std::pair<std::string, Symbol> strSymPair;
 typedef std::pair<Symbol, int32_t> symRulePair;
 
 const std::string& symToString(Symbol);
+
+OPCode operator&(OPCode _code, int _mask);
+unsigned char operator|(OPCode _a, OPCode _b);
+
 
 #endif

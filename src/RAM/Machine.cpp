@@ -65,23 +65,24 @@ uint32_t Machine::run()
 	m_currentOP = m_program->program()[m_instructionPointer].first;
 
 	if (m_program != NULL && m_inputTape != NULL && m_outputTape != NULL) {
-		while (m_currentOP != HALT) {
+		while (m_currentOP != OPCode::HALT) {
 			m_currentOP = m_program->program()[m_instructionPointer].first;
+
 			switch (m_currentOP & 0xE0) {
-			case 0x20: // ARITMÉTICAS
+			case ARITHMETIC:
 				arithmeticOps(m_program->program()[m_instructionPointer]);
 				break;
 
-			case 0x40: // REGISTROS
+			case REGISTER:
 				registerOps(m_program->program()[m_instructionPointer]);
 				break;
 
-			case  0x80: // SALTOS
+			case  BRANCH:
 				jumpOps(m_program->program()[m_instructionPointer]);
 				break;
 
 			default:
-				m_currentOP = HALT;
+				m_currentOP = OPCode::HALT;
 				break;
 			}
 		}
@@ -98,54 +99,57 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 	int32_t tempOperand;
 
 	switch (oper.first & 0x1C) {
-	case IMM:
+	case OPCode::IMM:
 		tempOperand = oper.second;
 		break;
 
-	case DIRECT:
+	case OPCode::DIRECT:
 		tempOperand = (*m_registers)[oper.second];
 		break;
 
-	case INDIRECT:
+	case OPCode::INDIRECT:
 		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
 	}
 
 	switch (oper.first & 0x23) { // FIXME: No se comprueban desbordamientos
-	case ADD:
+	case OPCode::ADD:
 		if (m_registers->getACC() + tempOperand > OPERAND_UPPER_BOUND ||
 		        m_registers->getACC() + tempOperand < OPERAND_LOWER_BOUND) {
 			m_machineState = OVERFLOW;
-			m_currentOP = HALT;
+			m_currentOP = OPCode::HALT;
 			return;
 		}
+
 		m_registers->setACC(m_registers->getACC() + tempOperand);
 		break;
 
-	case SUB:
+	case OPCode::SUB:
 		if (m_registers->getACC() - tempOperand > OPERAND_UPPER_BOUND ||
 		        m_registers->getACC() - tempOperand < OPERAND_LOWER_BOUND) {
 			m_machineState = OVERFLOW;
-			m_currentOP = HALT;
+			m_currentOP = OPCode::HALT;
 			return;
 		}
+
 		m_registers->setACC(m_registers->getACC() - tempOperand);
 		break;
 
-	case MULT:
+	case OPCode::MULT:
 		if (m_registers->getACC() * tempOperand > OPERAND_UPPER_BOUND ||
 		        m_registers->getACC() * tempOperand < OPERAND_LOWER_BOUND) {
 			m_machineState = OVERFLOW;
-			m_currentOP = HALT;
+			m_currentOP = OPCode::HALT;
 			return;
 		}
+
 		m_registers->setACC(m_registers->getACC() * tempOperand);
 		break;
 
-	case DIV:
+	case OPCode::DIV:
 		if (tempOperand == 0) {
 			m_machineState = ZERO_DIV;
-			m_currentOP = HALT;
+			m_currentOP = OPCode::HALT;
 			return;
 		} else {
 			m_registers->setACC(m_registers->getACC() / tempOperand);
@@ -163,49 +167,53 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 	//printw("%d\n", oper.first);
 
 	switch (oper.first & 0x1C) {
-	case IMM:
+	case OPCode::IMM:
 		tempOperand = oper.second;
 		break;
 
-	case DIRECT:
+	case OPCode::DIRECT:
 		tempOperand = (*m_registers)[oper.second];
 		break;
 
-	case INDIRECT:
+	case OPCode::INDIRECT:
 		tempOperand = (*m_registers)[(*m_registers)[oper.second]];
 		break;
 	}
 
 	switch (oper.first & 0x43) {
-	case LOAD: // Allows IMM, DIRECT and INDIRECT
+	case OPCode::LOAD: // Allows IMM, DIRECT and INDIRECT
 		m_registers->setACC(tempOperand);
 		break;
 
-	case WRITE: // Allows IMM, DIRECT and INDIRECT
+	case OPCode::WRITE: // Allows IMM, DIRECT and INDIRECT
 		m_outputTape->write(tempOperand);
 		break;
 
-	case STORE: // Doesn't allow IMM since the argument is necessarily a register
+	case OPCode::STORE: // Doesn't allow IMM since the argument is necessarily a register
 		switch (oper.first & 0x1C) {
-		case DIRECT:
+		case OPCode::DIRECT:
 			tempOperand = oper.second;
 			break;
-		case INDIRECT:
+
+		case OPCode::INDIRECT:
 			tempOperand = (*m_registers)[oper.second];
 			break;
 		}
+
 		(*m_registers)[tempOperand] = m_registers->getACC();
 		break;
 
-	case READ: // Doesn't allow IMM since the argument is necessarily a register
+	case OPCode::READ: // Doesn't allow IMM since the argument is necessarily a register
 		switch (oper.first & 0x1C) {
-		case DIRECT:
+		case OPCode::DIRECT:
 			tempOperand = oper.second;
 			break;
-		case INDIRECT:
+
+		case OPCode::INDIRECT:
 			tempOperand = (*m_registers)[oper.second];
 			break;
 		}
+
 		(*m_registers)[tempOperand] = m_inputTape->read();
 		break;
 	}
@@ -216,11 +224,11 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 {
 	switch (oper.first & 0x87) {
-	case JUMP:
+	case OPCode::JUMP:
 		m_instructionPointer = oper.second;
 		break;
 
-	case JGTZ:
+	case OPCode::JGTZ:
 		if (m_registers->getACC() > 0) {
 			m_instructionPointer = oper.second;
 		} else {
@@ -229,7 +237,7 @@ void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 
 		break;
 
-	case JZERO:
+	case OPCode::JZERO:
 		if (m_registers->getACC() == 0) {
 			m_instructionPointer = oper.second;
 		} else {
@@ -248,25 +256,25 @@ void Machine::debug()
 
 void Machine::step()
 {
-	if (m_currentOP != HALT) {
+	if (m_currentOP != OPCode::HALT) {
 		printw("%d %d\n", m_currentOP, m_program->program()[m_instructionPointer].second);
 	}
 
 	switch (m_currentOP & 0xE0) {
-	case 0x20: // ARITMÉTICAS
+	case ARITHMETIC:
 		arithmeticOps(m_program->program()[m_instructionPointer]);
 		break;
 
-	case 0x40: // REGISTROS
+	case REGISTER:
 		registerOps(m_program->program()[m_instructionPointer]);
 		break;
 
-	case  0x80: // SALTOS
+	case  BRANCH:
 		jumpOps(m_program->program()[m_instructionPointer]);
 		break;
 
 	default:
-		m_currentOP = HALT;
+		m_currentOP = OPCode::HALT;
 		break;
 	}
 

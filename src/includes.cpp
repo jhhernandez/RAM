@@ -61,3 +61,13 @@ const string& symToString(Symbol sym) {
 
 	return *new string(move(str));
 }
+
+OPCode operator&(OPCode _code, int _mask)
+{
+	return static_cast<OPCode>(static_cast<int>(_code) & _mask);
+}
+
+unsigned char operator|(OPCode _a, OPCode _b)
+{
+	return static_cast<unsigned char>(_a) | static_cast<unsigned char>(_b);
+}
