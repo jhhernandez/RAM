@@ -5,7 +5,7 @@
 #include <bits/stl_pair.h>
 #include <stdint.h>
 
-enum Symbol {
+enum class Symbol: char {
         NONE = -1,
 		// NON TERMINAL SYMBOLS
         NTS_S = 0, //< PROGRAM STARTING RULE

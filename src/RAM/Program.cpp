@@ -51,11 +51,11 @@ void Program::assemble() {
 
 		for (auto itt : it) {
 			switch (itt.second) {
-			case TS_INST_0:
+			case Symbol::TS_INST_0:
 				tmpOP = HALT;
 				break;
 
-			case TS_INST_1_OP:
+			case Symbol::TS_INST_1_OP:
 				if (itt.first == "ADD") {
 					tmpOP = ADD;
 				} else if (itt.first == "SUB") {
@@ -76,7 +76,7 @@ void Program::assemble() {
 
 				break;
 
-			case TS_INST_1_LAB:
+			case Symbol::TS_INST_1_LAB:
 				if (itt.first == "JUMP") {
 					tmpOP = JUMP;
 				} else if (itt.first == "JGTZ") {
@@ -87,22 +87,22 @@ void Program::assemble() {
 
 				break;
 
-			case TS_OP_IMM:
+			case Symbol::TS_OP_IMM:
 				tmpOP = static_cast<OPCode>(tmpOP | IMM);
 				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 
-			case TS_OP_DIRECT:
+			case Symbol::TS_OP_DIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | DIRECT);
 				stringstream(itt.first) >> tmpValue;
 				break;
 
-			case TS_OP_INDIRECT:
+			case Symbol::TS_OP_INDIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | INDIRECT);
 				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
 				break;
 
-			case TS_LABEL:
+			case Symbol::TS_LABEL:
 				tmpValue = m_labels[itt.first];
 				break;
 			}

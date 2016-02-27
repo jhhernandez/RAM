@@ -48,14 +48,14 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 
 		if (str[wspos] == ';') {
 			substr = str.substr(i, str.size() - i);
-			tokens.push_back(strSymPair(substr, TS_COMMENT));
+			tokens.push_back(strSymPair(substr, Symbol::TS_COMMENT));
 			break;
 		}
 
 		word_end = str.find_first_of(" ", wspos);
 		symbol = lexer(str.substr(wspos, word_end - wspos));
 
-		if (symbol == TS_LABEL) {  // Hack para TS_MARKER con : separados
+		if (symbol == Symbol::TS_LABEL) {  // Hack para Symbol::TS_MARKER con : separados
 			int32_t tp_start;
 			int32_t tp_end;
 			string label;
@@ -69,15 +69,15 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 
 			if (tp_start >= 0 && tp_start < str.size() && tp_end >= 0 && tp_end < str.size()) {
 				substr = str.substr(tp_start, tp_end - tp_start);
-				if (lexer(substr) == TS_TP) {
-					tokens.push_back(strSymPair(label + ":", TS_MARKER));
+				if (lexer(substr) == Symbol::TS_TP) {
+					tokens.push_back(strSymPair(label + ":", Symbol::TS_MARKER));
 					i = tp_end;
 					continue;
 				}
 			}
 		}
 
-		if (symbol == NONE) {
+		if (symbol == Symbol::NONE) {
 			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
 			     " no corresponde a ningún símbolo válido" << endl;
 		}
@@ -89,7 +89,7 @@ const vector<strSymPair> Parser::tokenize(const string& str)  {
 		i = word_end;
 	}
 
-	tokens.push_back(strSymPair("", TS_EOL));
+	tokens.push_back(strSymPair("", Symbol::TS_EOL));
 
 	return tokens;
 }
@@ -103,29 +103,29 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 	uint32_t line = 0;
 
 	// table setup
-	// NTS_S
-	table[NTS_S][TS_MARKER] = 1;
-	table[NTS_S][TS_INST_0] = 2;
-	table[NTS_S][TS_INST_1_LAB] = 2;
-	table[NTS_S][TS_INST_1_OP] = 2;
-	table[NTS_S][TS_COMMENT] = 3;
-	// NTS_A
-	table[NTS_A][TS_COMMENT] = 5;
-	table[NTS_A][TS_INST_0] = 4;
-	table[NTS_A][TS_INST_1_LAB] = 4;
-	table[NTS_A][TS_INST_1_OP] = 4;
-	table[NTS_A][TS_EOL] = 6;
-	// NTS_B
-	table[NTS_B][TS_COMMENT] = 7;
-	table[NTS_B][TS_EOL] = 8;
-	// NTS_INST
-	table[NTS_INST][TS_INST_0] = 9;
-	table[NTS_INST][TS_INST_1_LAB] = 10;
-	table[NTS_INST][TS_INST_1_OP] = 11;
-	// NTS_OPERAND
-	table[NTS_OPERAND][TS_OP_IMM] = 12;
-	table[NTS_OPERAND][TS_OP_DIRECT] = 13;
-	table[NTS_OPERAND][TS_OP_INDIRECT] = 14;
+	// Symbol::NTS_S
+	table[Symbol::NTS_S][Symbol::TS_MARKER] = 1;
+	table[Symbol::NTS_S][Symbol::TS_INST_0] = 2;
+	table[Symbol::NTS_S][Symbol::TS_INST_1_LAB] = 2;
+	table[Symbol::NTS_S][Symbol::TS_INST_1_OP] = 2;
+	table[Symbol::NTS_S][Symbol::TS_COMMENT] = 3;
+	// Symbol::NTS_A
+	table[Symbol::NTS_A][Symbol::TS_COMMENT] = 5;
+	table[Symbol::NTS_A][Symbol::TS_INST_0] = 4;
+	table[Symbol::NTS_A][Symbol::TS_INST_1_LAB] = 4;
+	table[Symbol::NTS_A][Symbol::TS_INST_1_OP] = 4;
+	table[Symbol::NTS_A][Symbol::TS_EOL] = 6;
+	// Symbol::NTS_B
+	table[Symbol::NTS_B][Symbol::TS_COMMENT] = 7;
+	table[Symbol::NTS_B][Symbol::TS_EOL] = 8;
+	// Symbol::NTS_INST
+	table[Symbol::NTS_INST][Symbol::TS_INST_0] = 9;
+	table[Symbol::NTS_INST][Symbol::TS_INST_1_LAB] = 10;
+	table[Symbol::NTS_INST][Symbol::TS_INST_1_OP] = 11;
+	// Symbol::NTS_OPERAND
+	table[Symbol::NTS_OPERAND][Symbol::TS_OP_IMM] = 12;
+	table[Symbol::NTS_OPERAND][Symbol::TS_OP_DIRECT] = 13;
+	table[Symbol::NTS_OPERAND][Symbol::TS_OP_INDIRECT] = 14;
 
 	for (auto it : program) {
 		vector<strSymPair>::const_iterator j;
@@ -135,8 +135,8 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 			symbol_stack.pop();
 		}
 
-		symbol_stack.push(TS_EOL);
-		symbol_stack.push(NTS_S);
+		symbol_stack.push(Symbol::TS_EOL);
+		symbol_stack.push(Symbol::NTS_S);
 
 		j = it.begin();
 // 		line = i - program.begin();
@@ -154,30 +154,30 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 				switch (rule) {
 				case 1:
 					symbol_stack.pop();
-					symbol_stack.push(NTS_A);
-					symbol_stack.push(TS_MARKER);
+					symbol_stack.push(Symbol::NTS_A);
+					symbol_stack.push(Symbol::TS_MARKER);
 					break;
 
 				case 2:
 					symbol_stack.pop();
-					symbol_stack.push(NTS_B);
-					symbol_stack.push(NTS_INST);
+					symbol_stack.push(Symbol::NTS_B);
+					symbol_stack.push(Symbol::NTS_INST);
 					break;
 
 				case 3:
 					symbol_stack.pop();
-					symbol_stack.push(TS_COMMENT);
+					symbol_stack.push(Symbol::TS_COMMENT);
 					break;
 
 				case 4:
 					symbol_stack.pop();
-					symbol_stack.push(NTS_B);
-					symbol_stack.push(NTS_INST);
+					symbol_stack.push(Symbol::NTS_B);
+					symbol_stack.push(Symbol::NTS_INST);
 					break;
 
 				case 5:
 					symbol_stack.pop();
-					symbol_stack.push(TS_COMMENT);
+					symbol_stack.push(Symbol::TS_COMMENT);
 					break;
 
 				case 6:
@@ -186,7 +186,7 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 
 				case 7:
 					symbol_stack.pop();
-					symbol_stack.push(TS_COMMENT);
+					symbol_stack.push(Symbol::TS_COMMENT);
 					break;
 
 				case 8:
@@ -195,34 +195,34 @@ int32_t Parser::parse(std::vector<std::vector<strSymPair> > program) {
 
 				case 9:
 					symbol_stack.pop();
-					symbol_stack.push(TS_INST_0);
+					symbol_stack.push(Symbol::TS_INST_0);
 					break;
 
 				case 10:
 					symbol_stack.pop();
-					symbol_stack.push(TS_LABEL);
-					symbol_stack.push(TS_INST_1_LAB);
+					symbol_stack.push(Symbol::TS_LABEL);
+					symbol_stack.push(Symbol::TS_INST_1_LAB);
 					break;
 
 				case 11:
 					symbol_stack.pop();
-					symbol_stack.push(NTS_OPERAND);
-					symbol_stack.push(TS_INST_1_OP);
+					symbol_stack.push(Symbol::NTS_OPERAND);
+					symbol_stack.push(Symbol::TS_INST_1_OP);
 					break;
 
 				case 12:
 					symbol_stack.pop();
-					symbol_stack.push(TS_OP_IMM);
+					symbol_stack.push(Symbol::TS_OP_IMM);
 					break;
 
 				case 13:
 					symbol_stack.pop();
-					symbol_stack.push(TS_OP_DIRECT);
+					symbol_stack.push(Symbol::TS_OP_DIRECT);
 					break;
 
 				case 14:
 					symbol_stack.pop();
-					symbol_stack.push(TS_OP_INDIRECT);
+					symbol_stack.push(Symbol::TS_OP_INDIRECT);
 					break;
 
 				default:
@@ -269,31 +269,31 @@ Symbol Parser::lexer(const string& str) {
 	regex tp("\\s*:\\s*");
 
 	if (regex_match(str, marker)) {
-		return TS_MARKER;
+		return Symbol::TS_MARKER;
 	} else if (regex_match(str, label)) {
-		return TS_LABEL;
+		return Symbol::TS_LABEL;
 	} else if (regex_match(str, instruction)) {
 		if (regex_match(str, inst0)) {
-			return TS_INST_0;
+			return Symbol::TS_INST_0;
 		} else if (regex_match(str, inst1label)) {
-			return TS_INST_1_LAB;
+			return Symbol::TS_INST_1_LAB;
 		}
 
-		return TS_INST_1_OP;
+		return Symbol::TS_INST_1_OP;
 	} else if (regex_match(str, comment)) {
-		return TS_COMMENT;
+		return Symbol::TS_COMMENT;
 	} else if (regex_match(str, operand)) {
 		if (regex_match(str, opimm)) {
-			return TS_OP_IMM;
+			return Symbol::TS_OP_IMM;
 		} else if (regex_match(str, opind)) {
-			return TS_OP_INDIRECT;
+			return Symbol::TS_OP_INDIRECT;
 		}
 
-		return TS_OP_DIRECT;
+		return Symbol::TS_OP_DIRECT;
 	} else if (regex_match(str, tp)) {
-		return TS_TP;
+		return Symbol::TS_TP;
 	} else {
-		return NONE;
+		return Symbol::NONE;
 	}
 }
 
@@ -317,10 +317,10 @@ int32_t Parser::readFile(const char* file) {
 
 	if (parse(program) == 0) {
 		for (auto it : program) {
-			if (it[0].second != TS_COMMENT) {
+			if (it[0].second != Symbol::TS_COMMENT) {
 				m_program.push_back(it);
 
-				if (it[0].second == TS_MARKER) {
+				if (it[0].second == Symbol::TS_MARKER) {
 					if (m_labels.count(it[0].first.substr(0, it[0].first.size() - 1)) == 0) {
 						m_labels[it[0].first.substr(0, it[0].first.size() - 1)] = m_program.size() - 1;
 					} else {

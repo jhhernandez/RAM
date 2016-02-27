@@ -6,56 +6,56 @@ const string& symToString(Symbol sym) {
 	string str;
 
 	switch (sym) {
-	case TS_EOL:
-		str = "TS_EOL";
+	case Symbol::TS_EOL:
+		str = "Symbol::TS_EOL";
 		break;
 
-	case NTS_S:
-		str = "NTS_S";
+	case Symbol::NTS_S:
+		str = "Symbol::NTS_S";
 		break;
 
-	case NTS_INST:
-		str = "NTS_INST";
+	case Symbol::NTS_INST:
+		str = "Symbol::NTS_INST";
 		break;
 
-	case TS_MARKER:
-		str = "TS_MARKER";
+	case Symbol::TS_MARKER:
+		str = "Symbol::TS_MARKER";
 		break;
 
-	case TS_LABEL:
-		str = "TS_LABEL";
+	case Symbol::TS_LABEL:
+		str = "Symbol::TS_LABEL";
 		break;
 
-	case TS_COMMENT:
-		str = "TS_COMMENT";
+	case Symbol::TS_COMMENT:
+		str = "Symbol::TS_COMMENT";
 		break;
 
-	case TS_INST_0:
-		str = "TS_INST_0";
+	case Symbol::TS_INST_0:
+		str = "Symbol::TS_INST_0";
 		break;
 
-	case TS_INST_1_LAB:
-		str = "TS_INST_1_LAB";
+	case Symbol::TS_INST_1_LAB:
+		str = "Symbol::TS_INST_1_LAB";
 		break;
 
-	case TS_INST_1_OP:
-		str = "TS_INST_1_OP";
+	case Symbol::TS_INST_1_OP:
+		str = "Symbol::TS_INST_1_OP";
 		break;
 
-	case NTS_OPERAND:
-		str = "NTS_OPERAND";
+	case Symbol::NTS_OPERAND:
+		str = "Symbol::NTS_OPERAND";
 		break;
 
-	case TS_OP_IMM:
-		str = "TS_OP_IMM";
+	case Symbol::TS_OP_IMM:
+		str = "Symbol::TS_OP_IMM";
 		break;
 
-	case TS_OP_DIRECT:
-		str = "TS_OP_DIRECT";
+	case Symbol::TS_OP_DIRECT:
+		str = "Symbol::TS_OP_DIRECT";
 		break;
 
-	case TS_OP_INDIRECT:
-		str = "TS_OP_INDIRECT";
+	case Symbol::TS_OP_INDIRECT:
+		str = "Symbol::TS_OP_INDIRECT";
 		break;
 	}
 
