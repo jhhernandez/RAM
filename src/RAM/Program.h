@@ -28,8 +28,7 @@
 
 class Program {
 public:
-	Program(const char*);
-	~Program();
+	Program(const std::string& _file);
 	
 	const std::vector<std::vector<strSymPair> >& programCode() {
 		return m_program;

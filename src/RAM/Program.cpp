@@ -22,11 +22,13 @@
 
 #include <sstream>
 
-using namespace std;
+using std::string;
+using std::stringstream;
+using std::pair;
 
-Program::Program(const char* cstr)
+Program::Program(const string& _file)
 {
-	Parser p{cstr};
+	Parser p{_file};
 
 	m_program = p.program();
 	m_labels = p.labels();
@@ -36,40 +38,35 @@ Program::Program(const char* cstr)
 	assemble();
 }
 
-Program::~Program()
-{
-
-}
-
 void Program::assemble()
 {
 	uint32_t line = 0;
 	OPCode tmpOP;
 	int32_t tmpValue;
 
-	for (auto it : m_program) {
+	for (const auto& it : m_program) {
 		tmpValue = 0;
 
-		for (auto itt : it) {
-			switch (itt.second) {
+		for (const auto& jt : it) {
+			switch (jt.second) {
 			case Symbol::TS_INST_0:
 				tmpOP = OPCode::HALT;
 				break;
 
 			case Symbol::TS_INST_1_OP:
-				if (itt.first == "ADD") {
+				if (jt.first == "ADD") {
 					tmpOP = OPCode::ADD;
-				} else if (itt.first == "SUB") {
+				} else if (jt.first == "SUB") {
 					tmpOP = OPCode::SUB;
-				} else if (itt.first == "MULT") {
+				} else if (jt.first == "MULT") {
 					tmpOP = OPCode::MULT;
-				} else if (itt.first == "DIV") {
+				} else if (jt.first == "DIV") {
 					tmpOP = OPCode::DIV;
-				} else if (itt.first == "LOAD") {
+				} else if (jt.first == "LOAD") {
 					tmpOP = OPCode::LOAD;
-				} else if (itt.first == "STORE") {
+				} else if (jt.first == "STORE") {
 					tmpOP = OPCode::STORE;
-				} else if (itt.first == "READ") {
+				} else if (jt.first == "READ") {
 					tmpOP = OPCode::READ;
 				} else {
 					tmpOP = OPCode::WRITE;
@@ -78,9 +75,9 @@ void Program::assemble()
 				break;
 
 			case Symbol::TS_INST_1_LAB:
-				if (itt.first == "JUMP") {
+				if (jt.first == "JUMP") {
 					tmpOP = OPCode::JUMP;
-				} else if (itt.first == "JGTZ") {
+				} else if (jt.first == "JGTZ") {
 					tmpOP = OPCode::JGTZ;
 				} else {
 					tmpOP = OPCode::JZERO;
@@ -90,21 +87,21 @@ void Program::assemble()
 
 			case Symbol::TS_OP_IMM:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::IMM);
-				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
+				stringstream(jt.first.substr(1, jt.first.size() - 1)) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_DIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::DIRECT);
-				stringstream(itt.first) >> tmpValue;
+				stringstream(jt.first) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_INDIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::INDIRECT);
-				stringstream(itt.first.substr(1, itt.first.size() - 1)) >> tmpValue;
+				stringstream(jt.first.substr(1, jt.first.size() - 1)) >> tmpValue;
 				break;
 
 			case Symbol::TS_LABEL:
-				tmpValue = m_labels[itt.first];
+				tmpValue = m_labels[jt.first];
 				break;
 			}
 		}
