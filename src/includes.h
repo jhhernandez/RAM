@@ -62,7 +62,7 @@ constexpr auto BRANCH = OPCode::JUMP;
 typedef std::pair<std::string, Symbol> strSymPair;
 typedef std::pair<Symbol, int32_t> symRulePair;
 
-const std::string& symToString(Symbol);
+std::string symToString(Symbol);
 
 OPCode operator&(OPCode _code, OPMask _mask);
 unsigned char operator|(OPCode _a, OPCode _b);

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const string& symToString(Symbol sym) {
+string symToString(Symbol sym) {
 	string str;
 
 	switch (sym) {
@@ -59,7 +59,7 @@ const string& symToString(Symbol sym) {
 		break;
 	}
 
-	return *new string(move(str));
+	return str;
 }
 
 OPCode operator&(OPCode _code, OPMask _mask)
