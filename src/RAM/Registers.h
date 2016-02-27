@@ -22,23 +22,23 @@
 
 #include <vector>
 #include <cstdint>
-#include <cstdlib>
+#include <cstddef>
 
 class Registers {
 public:
 	Registers();
-	~Registers();
+
 	const std::vector<int32_t>& show() {
 		return m_register;
 	}
-	
+
 	void setACC(int32_t);
-	int32_t& operator[] (uint32_t pos) {
+	int32_t& operator[](uint32_t pos) {
 		if (pos >= 1 && pos < m_size) {
 			return m_register[pos];
 		}
 	}
-	
+
 	int32_t getACC() {
 		return m_register[0];
 	}

@@ -77,8 +77,8 @@ public:
 
 	void step();
 private:
-	static const int32_t OPERAND_UPPER_BOUND = 65536;
-	static const int32_t OPERAND_LOWER_BOUND = -65535;
+	static constexpr int32_t OPERAND_UPPER_BOUND = 65536;
+	static constexpr int32_t OPERAND_LOWER_BOUND = -65535;
 
 	Program* m_program;
 	Registers* m_registers;

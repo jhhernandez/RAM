@@ -23,10 +23,6 @@ Registers::Registers() {
 	m_register.resize(m_size);
 }
 
-Registers::~Registers() {
-
-}
-
 void Registers::setACC(int32_t val) {
 	m_register[0] = val;
 }
