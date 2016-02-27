@@ -43,43 +43,43 @@ Parser::Parser(const std::string& _file)
 {
 	m_program.resize(0);
 
-	readFile(_file.c_str());
+	readFile(_file);
 }
 
-const vector<strSymPair> Parser::tokenize(const string& str)
+const vector<strSymPair> Parser::tokenize(const string& _str)
 {
 	vector<strSymPair> tokens;
 	string substr;
-	int32_t wspos;
+	int32_t whitespace_position;
 	int32_t word_end;
 	Symbol symbol;
 
-	for (uint32_t i = 0; i < str.size();) {
-		wspos = str.find_first_not_of(" ", i);
+	for (uint32_t i = 0; i < _str.size();) {
+		whitespace_position = _str.find_first_not_of(" ", i);
 
-		if (str[wspos] == ';') {
-			substr = str.substr(i, str.size() - i);
+		if (_str[whitespace_position] == ';') {
+			substr = _str.substr(i, _str.size() - i);
 			tokens.push_back(strSymPair(substr, Symbol::TS_COMMENT));
 			break;
 		}
 
-		word_end = str.find_first_of(" ", wspos);
-		symbol = lexer(str.substr(wspos, word_end - wspos));
+		word_end = _str.find_first_of(" ", whitespace_position);
+		symbol = lexer(_str.substr(whitespace_position, word_end - whitespace_position));
 
 		if (symbol == Symbol::TS_LABEL) {  // Hack para Symbol::TS_MARKER con : separados
 			int32_t tp_start;
 			int32_t tp_end;
 			string label;
 
-			label = str.substr(wspos, word_end - wspos);
+			label = _str.substr(whitespace_position, word_end - whitespace_position);
 			trim_left(label);
 			trim_right(label);
 
-			tp_start = str.find_first_not_of(" ", word_end);
-			tp_end = str.find_first_of(" ", tp_start);
+			tp_start = _str.find_first_not_of(" ", word_end);
+			tp_end = _str.find_first_of(" ", tp_start);
 
-			if (tp_start >= 0 && tp_start < str.size() && tp_end >= 0 && tp_end < str.size()) {
-				substr = str.substr(tp_start, tp_end - tp_start);
+			if (tp_start >= 0 && tp_start < _str.size() && tp_end >= 0 && tp_end < _str.size()) {
+				substr = _str.substr(tp_start, tp_end - tp_start);
 
 				if (lexer(substr) == Symbol::TS_TP) {
 					tokens.push_back(strSymPair(label + ":", Symbol::TS_MARKER));
@@ -90,11 +90,11 @@ const vector<strSymPair> Parser::tokenize(const string& str)
 		}
 
 		if (symbol == Symbol::NONE) {
-			cout << "ERROR: " << str.substr(wspos, word_end - wspos) <<
+			cout << "ERROR: " << _str.substr(whitespace_position, word_end - whitespace_position) <<
 			     " no corresponde a ningún símbolo válido" << endl;
 		}
 
-		substr = str.substr(wspos, word_end - wspos);
+		substr = _str.substr(whitespace_position, word_end - whitespace_position);
 		trim_right(substr);
 		trim_left(substr);
 		tokens.push_back(strSymPair(substr, symbol));

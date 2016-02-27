@@ -26,7 +26,7 @@ using namespace std;
 
 Program::Program(const char* cstr)
 {
-	Parser p{string{cstr}};
+	Parser p{cstr};
 
 	m_program = p.program();
 	m_labels = p.labels();
