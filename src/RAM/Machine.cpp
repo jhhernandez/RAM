@@ -68,7 +68,7 @@ uint32_t Machine::run()
 		while (m_currentOP != OPCode::HALT) {
 			m_currentOP = m_program->program()[m_instructionPointer].first;
 
-			switch (m_currentOP & 0xE0) {
+			switch (m_currentOP & OPMask::TYPE) {
 			case ARITHMETIC:
 				arithmeticOps(m_program->program()[m_instructionPointer]);
 				break;
@@ -98,7 +98,7 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 {
 	int32_t tempOperand;
 
-	switch (oper.first & 0x1C) {
+	switch (oper.first & OPMask::REDIRECTION) {
 	case OPCode::IMM:
 		tempOperand = oper.second;
 		break;
@@ -112,7 +112,7 @@ void Machine::arithmeticOps(std::pair<OPCode, int32_t> oper)
 		break;
 	}
 
-	switch (oper.first & 0x23) { // FIXME: No se comprueban desbordamientos
+	switch (oper.first & OPMask::OPERATION) {
 	case OPCode::ADD:
 		if (m_registers->getACC() + tempOperand > OPERAND_UPPER_BOUND ||
 		        m_registers->getACC() + tempOperand < OPERAND_LOWER_BOUND) {
@@ -166,7 +166,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 	int32_t tempOperand;
 	//printw("%d\n", oper.first);
 
-	switch (oper.first & 0x1C) {
+	switch (oper.first & OPMask::REDIRECTION) {
 	case OPCode::IMM:
 		tempOperand = oper.second;
 		break;
@@ -180,7 +180,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		break;
 	}
 
-	switch (oper.first & 0x43) {
+	switch (oper.first & OPMask::REGISTER) {
 	case OPCode::LOAD: // Allows IMM, DIRECT and INDIRECT
 		m_registers->setACC(tempOperand);
 		break;
@@ -190,7 +190,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		break;
 
 	case OPCode::STORE: // Doesn't allow IMM since the argument is necessarily a register
-		switch (oper.first & 0x1C) {
+		switch (oper.first & OPMask::REDIRECTION) {
 		case OPCode::DIRECT:
 			tempOperand = oper.second;
 			break;
@@ -204,7 +204,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 		break;
 
 	case OPCode::READ: // Doesn't allow IMM since the argument is necessarily a register
-		switch (oper.first & 0x1C) {
+		switch (oper.first & OPMask::REDIRECTION) {
 		case OPCode::DIRECT:
 			tempOperand = oper.second;
 			break;
@@ -223,7 +223,7 @@ void Machine::registerOps(std::pair<OPCode, int32_t> oper)
 
 void Machine::jumpOps(std::pair<OPCode, int32_t> oper)
 {
-	switch (oper.first & 0x87) {
+	switch (oper.first & OPMask::BRANCH) {
 	case OPCode::JUMP:
 		m_instructionPointer = oper.second;
 		break;
@@ -260,7 +260,7 @@ void Machine::step()
 		printw("%d %d\n", m_currentOP, m_program->program()[m_instructionPointer].second);
 	}
 
-	switch (m_currentOP & 0xE0) {
+	switch (m_currentOP & OPMask::TYPE) {
 	case ARITHMETIC:
 		arithmeticOps(m_program->program()[m_instructionPointer]);
 		break;
