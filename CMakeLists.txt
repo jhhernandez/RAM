@@ -16,15 +16,6 @@ find_package(Boost REQUIRED)
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)
 
-if(Boost_FOUND)
-        include_directories(${Boost_INCLUDE_DIRS})
-		find_library(
-			BOOST_REGEX_LIB
-			libboost_regex.so
-			PATHS ${Boost_LIBRARY_DIRS}
-		)
-endif(Boost_FOUND)
-
 if(CURSES_FOUND)
 	find_library(
 		NCURSES_LIBRARY
