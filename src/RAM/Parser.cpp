@@ -17,6 +17,7 @@
  *
  */
 
+#include "StringSymbol.h"
 #include "Parser.h"
 
 #include <iostream>
@@ -46,9 +47,9 @@ Parser::Parser(const string& _file)
 	readFile(_file);
 }
 
-const vector<strSymPair> Parser::tokenize(const string& _str)
+const vector<StringSymbol> Parser::tokenize(const string& _str)
 {
-	vector<strSymPair> tokens;
+	vector<StringSymbol> tokens;
 	string substr;
 	int32_t whitespace_position;
 	int32_t word_end;
@@ -59,7 +60,7 @@ const vector<strSymPair> Parser::tokenize(const string& _str)
 
 		if (_str[whitespace_position] == ';') {
 			substr = _str.substr(i, _str.size() - i);
-			tokens.push_back(strSymPair(substr, Symbol::TS_COMMENT));
+			tokens.push_back(StringSymbol(substr, Symbol::TS_COMMENT));
 			break;
 		}
 
@@ -82,7 +83,7 @@ const vector<strSymPair> Parser::tokenize(const string& _str)
 				substr = _str.substr(tp_start, tp_end - tp_start);
 
 				if (lexer(substr) == Symbol::TS_TP) {
-					tokens.push_back(strSymPair(label + ":", Symbol::TS_MARKER));
+					tokens.push_back(StringSymbol(label + ":", Symbol::TS_MARKER));
 					i = tp_end;
 					continue;
 				}
@@ -97,17 +98,17 @@ const vector<strSymPair> Parser::tokenize(const string& _str)
 		substr = _str.substr(whitespace_position, word_end - whitespace_position);
 		trim_right(substr);
 		trim_left(substr);
-		tokens.push_back(strSymPair(substr, symbol));
+		tokens.push_back(StringSymbol(substr, symbol));
 		i = word_end;
 	}
 
-	tokens.push_back(strSymPair("", Symbol::TS_EOL));
+	tokens.push_back(StringSymbol("", Symbol::TS_EOL));
 
 	return tokens;
 }
 
 // FIXME: use exceptions instead of return values
-int32_t Parser::parse(vector<vector<strSymPair>> program)
+int32_t Parser::parse(const vector<vector<StringSymbol>>& _program)
 {
 	/* LH RH Rule*/
 	map<Symbol, map<Symbol, uint32_t>> table;
@@ -141,8 +142,8 @@ int32_t Parser::parse(vector<vector<strSymPair>> program)
 	table[Symbol::NTS_OPERAND][Symbol::TS_OP_DIRECT] = 13;
 	table[Symbol::NTS_OPERAND][Symbol::TS_OP_INDIRECT] = 14;
 
-	for (auto it : program) {
-		vector<strSymPair>::const_iterator j;
+	for (auto it : _program) {
+		vector<StringSymbol>::const_iterator j;
 
 		// stack init
 		while (!symbol_stack.empty()) {
@@ -156,7 +157,7 @@ int32_t Parser::parse(vector<vector<strSymPair>> program)
 // 		line = i - program.begin();
 
 		while (!symbol_stack.empty()) {
-			current_symbol = (*j).second;
+			current_symbol = (*j).sym();
 
 			if (current_symbol == symbol_stack.top()) {
 
@@ -247,15 +248,15 @@ int32_t Parser::parse(vector<vector<strSymPair>> program)
 					
 					cout << "Parsing failed at line " << line << ": ";
 
-					for (vector<strSymPair>::const_iterator k = it.begin(); k != it.end(); ++k) {
-						cout << (*k).first << " ";
+					for (vector<StringSymbol>::const_iterator k = it.begin(); k != it.end(); ++k) {
+						cout << (*k).str() << " ";
 					}
 
 					cout << endl;
 					cout << "\t\t\t\t"; // FIXME: Deja >= 25 espacios
 
-					for (vector<strSymPair>::const_iterator k = it.begin(); k != it.end(); ++k) {
-						if ((*k) == (*j)) {
+					for (vector<StringSymbol>::const_iterator k = it.begin(); k != it.end(); ++k) {
+						if ((*k).sym() == (*j).sym()) {
 							cout << "^" << endl;
 						} else {
 							// FIXME: Introducir espacios aqui dependiendo de tal y cual
@@ -319,7 +320,7 @@ Symbol Parser::lexer(const string& str)
 
 int32_t Parser::readFile(const string& _file)
 {
-	vector<vector<strSymPair>> program;
+	vector<vector<StringSymbol>> program;
 	ifstream ifs(_file);
 	string line;
 	vector<string> vecline;
@@ -343,12 +344,12 @@ int32_t Parser::readFile(const string& _file)
 	 * to build the m_program object
 	 */
 	for (const auto & it : program) {
-		if (it[0].second != Symbol::TS_COMMENT) {
+		if (it[0].sym() != Symbol::TS_COMMENT) {
 			m_program.push_back(it);
 
-			if (it[0].second == Symbol::TS_MARKER) {
-				if (m_labels.count(it[0].first.substr(0, it[0].first.size() - 1)) == 0) {
-					m_labels[it[0].first.substr(0, it[0].first.size() - 1)] = m_program.size() - 1;
+			if (it[0].sym() == Symbol::TS_MARKER) {
+				if (m_labels.count(it[0].str().substr(0, it[0].str().size() - 1)) == 0) {
+					m_labels[it[0].str().substr(0, it[0].str().size() - 1)] = m_program.size() - 1;
 				} else {
 					return -1;
 				}

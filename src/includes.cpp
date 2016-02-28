@@ -2,10 +2,10 @@
 
 using std::string;
 
-string symToString(Symbol sym) {
+string symToString(Symbol _sym) {
 	string str;
 
-	switch (sym) {
+	switch (_sym) {
 	case Symbol::TS_EOL:
 		str = "Symbol::TS_EOL";
 		break;

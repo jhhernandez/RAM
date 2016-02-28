@@ -48,25 +48,25 @@ void Program::assemble()
 		tmpValue = 0;
 
 		for (const auto& jt : it) {
-			switch (jt.second) {
+			switch (jt.sym()) {
 			case Symbol::TS_INST_0:
 				tmpOP = OPCode::HALT;
 				break;
 
 			case Symbol::TS_INST_1_OP:
-				if (jt.first == "ADD") {
+				if (jt.str() == "ADD") {
 					tmpOP = OPCode::ADD;
-				} else if (jt.first == "SUB") {
+				} else if (jt.str() == "SUB") {
 					tmpOP = OPCode::SUB;
-				} else if (jt.first == "MULT") {
+				} else if (jt.str() == "MULT") {
 					tmpOP = OPCode::MULT;
-				} else if (jt.first == "DIV") {
+				} else if (jt.str() == "DIV") {
 					tmpOP = OPCode::DIV;
-				} else if (jt.first == "LOAD") {
+				} else if (jt.str() == "LOAD") {
 					tmpOP = OPCode::LOAD;
-				} else if (jt.first == "STORE") {
+				} else if (jt.str() == "STORE") {
 					tmpOP = OPCode::STORE;
-				} else if (jt.first == "READ") {
+				} else if (jt.str() == "READ") {
 					tmpOP = OPCode::READ;
 				} else {
 					tmpOP = OPCode::WRITE;
@@ -75,9 +75,9 @@ void Program::assemble()
 				break;
 
 			case Symbol::TS_INST_1_LAB:
-				if (jt.first == "JUMP") {
+				if (jt.str() == "JUMP") {
 					tmpOP = OPCode::JUMP;
-				} else if (jt.first == "JGTZ") {
+				} else if (jt.str() == "JGTZ") {
 					tmpOP = OPCode::JGTZ;
 				} else {
 					tmpOP = OPCode::JZERO;
@@ -87,21 +87,21 @@ void Program::assemble()
 
 			case Symbol::TS_OP_IMM:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::IMM);
-				stringstream(jt.first.substr(1, jt.first.size() - 1)) >> tmpValue;
+				stringstream(jt.str().substr(1, jt.str().size() - 1)) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_DIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::DIRECT);
-				stringstream(jt.first) >> tmpValue;
+				stringstream(jt.str()) >> tmpValue;
 				break;
 
 			case Symbol::TS_OP_INDIRECT:
 				tmpOP = static_cast<OPCode>(tmpOP | OPCode::INDIRECT);
-				stringstream(jt.first.substr(1, jt.first.size() - 1)) >> tmpValue;
+				stringstream(jt.str().substr(1, jt.str().size() - 1)) >> tmpValue;
 				break;
 
 			case Symbol::TS_LABEL:
-				tmpValue = m_labels[jt.first];
+				tmpValue = m_labels[jt.str()];
 				break;
 			default:
 				break;

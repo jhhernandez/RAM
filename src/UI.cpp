@@ -203,7 +203,7 @@ void UI::disassembler() {
 	for (auto it : m_machine->showProgram()) {
 		printw("I[%d] ", i++);
 		for (auto itt : it) {
-			printw("%s ", itt.first.c_str());
+			printw("%s ", itt.str().c_str());
 		}
 		printw("\n");
 	}

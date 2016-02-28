@@ -1,5 +1,6 @@
 set (MACHINE_SOURCES
 	includes.cpp
+	RAM/StringSymbol.cpp
  	RAM/Machine.cpp
  	RAM/Tape.cpp
 	RAM/Registers.cpp

@@ -20,6 +20,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "StringSymbol.h"
 #include "../includes.h"
 
 #include <vector>
@@ -33,7 +34,7 @@ public:
 	 */
 	Parser(const std::string& _file);
 
-	const std::vector<std::vector<strSymPair> >& program() {
+	const std::vector<std::vector<StringSymbol>>& program() {
 		return m_program;
 	}
 
@@ -42,20 +43,14 @@ public:
 	}
 
 private:
-	std::vector<std::vector<strSymPair> > m_program;
+	std::vector<std::vector<StringSymbol>> m_program;
 	std::map<std::string, uint32_t> m_labels;
-	/**
-	 * \fn CCTOR
-	 */
-	Parser(const Parser& other);
-	/**
-	 * \fn CCTOR
-	 */
-	const std::vector<strSymPair> tokenize(const std::string&);
+
+	const std::vector<StringSymbol> tokenize(const std::string&);
 	Symbol lexer(const std::string&);
 
 	/**
-	 * \fn readFile(const char* file)
+	 * \fn readFile(const std::string& file)
 	 * \param file Ruta del archivo a leer
 	 * \return Devuelve 0 en caso de lectura exitosa
 	 */
@@ -65,7 +60,7 @@ private:
 	* \fn parse()
 	* \return 0 si el parseo se completa
 	*/
-	int32_t parse(std::vector<std::vector<strSymPair>>);
+	int32_t parse(const std::vector<std::vector<StringSymbol>>& _program);
 };
 
 #endif // PROGRAM_H

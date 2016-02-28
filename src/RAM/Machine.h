@@ -49,7 +49,7 @@ public:
 		return m_registers->show();
 	}
 
-	const std::vector<std::vector<strSymPair> >& showProgram() {
+	const std::vector<std::vector<StringSymbol>>& showProgram() {
 		return m_program->programCode();
 	}
 	
