@@ -27,8 +27,6 @@ enum class Symbol {
         TS_EOL
 };
 
-//typedef unsigned char OPCode;
-
 enum class OPCode: unsigned char {
 	HALT = 0x0,
 	INDIRECT = 0x4, 

@@ -1,6 +1,6 @@
 #include "includes.h"
 
-using namespace std;
+using std::string;
 
 string symToString(Symbol sym) {
 	string str;

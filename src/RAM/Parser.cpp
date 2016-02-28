@@ -39,7 +39,7 @@ using std::stack;
 using boost::trim_left;
 using boost::trim_right;
 
-Parser::Parser(const std::string& _file)
+Parser::Parser(const string& _file)
 {
 	m_program.resize(0);
 
@@ -67,8 +67,8 @@ const vector<strSymPair> Parser::tokenize(const string& _str)
 		symbol = lexer(_str.substr(whitespace_position, word_end - whitespace_position));
 
 		if (symbol == Symbol::TS_LABEL) {  // Hack para Symbol::TS_MARKER con : separados
-			int32_t tp_start;
-			int32_t tp_end;
+			uint32_t tp_start;
+			uint32_t tp_end;
 			string label;
 
 			label = _str.substr(whitespace_position, word_end - whitespace_position);
@@ -107,7 +107,7 @@ const vector<strSymPair> Parser::tokenize(const string& _str)
 }
 
 // FIXME: use exceptions instead of return values
-int32_t Parser::parse(std::vector<std::vector<strSymPair>> program)
+int32_t Parser::parse(vector<vector<strSymPair>> program)
 {
 	/* LH RH Rule*/
 	map<Symbol, map<Symbol, uint32_t>> table;
@@ -319,7 +319,7 @@ Symbol Parser::lexer(const string& str)
 
 int32_t Parser::readFile(const string& _file)
 {
-	std::vector<std::vector<strSymPair> > program;
+	vector<vector<strSymPair>> program;
 	ifstream ifs(_file);
 	string line;
 	vector<string> vecline;

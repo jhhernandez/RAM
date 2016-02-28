@@ -12,7 +12,7 @@ public:
 	void run();
 
 private:
-	typedef enum {
+	enum class Screen {
 	        MENU,
 		REGS,
 	        TRACE,
@@ -21,7 +21,7 @@ private:
 	        INPUT,
 	        OUTPUT,
 		HELP
-	} Screen;
+	};
 	
 	Machine* m_machine;
 

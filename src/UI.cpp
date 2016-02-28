@@ -5,7 +5,8 @@
 
 using namespace std;
 
-UI::UI(const Machine& machine) : m_machine(const_cast<Machine*>(&machine)), m_running(false), m_screen(MENU) {
+//FIXME: remove the evil const_cast
+UI::UI(const Machine& machine) : m_machine(const_cast<Machine*>(&machine)), m_screen(Screen::MENU), m_running(false) {
 	initscr();
 	raw();
 	keypad(stdscr, TRUE);
@@ -21,27 +22,27 @@ void UI::run() {
 
 	while (m_running) {
 		switch (m_screen) {
-			case MENU:
+			case Screen::MENU:
 				menu();
 				break;
-			case REGS:
+			case Screen::REGS:
 				break;
-			case TRACE:
+			case Screen::TRACE:
 				trace();
 				break;
-			case EXECUTE:
+			case Screen::EXECUTE:
 				m_machine->run();
 				break;
-			case DISASSEMBLER:
+			case Screen::DISASSEMBLER:
 				disassembler();
 				break;
-			case INPUT:
+			case Screen::INPUT:
 				input();
 				break;
-			case OUTPUT:
+			case Screen::OUTPUT:
 				output();
 				break;
-			case HELP:
+			case Screen::HELP:
 				help();
 				break;
 		}
@@ -53,7 +54,7 @@ void UI::run() {
 
 void UI::event(int32_t ev) {
 	
-	if (m_screen == MENU) {
+	if (m_screen == Screen::MENU) {
 		switch (ev) {
 		case static_cast<int32_t>('r'):
 			registers();
@@ -94,7 +95,7 @@ void UI::event(int32_t ev) {
 		if (ev == static_cast<int32_t>('q')) {
 			menu();
 		}
-		if (m_screen == TRACE) {
+		if (m_screen == Screen::TRACE) {
 			if (ev == static_cast<int32_t>('n')) {
 				m_next = true;
 			} else if (ev == static_cast<int32_t>('q')) {
@@ -106,7 +107,7 @@ void UI::event(int32_t ev) {
 }
 
 void UI::menu() {
-	m_screen = MENU;
+	m_screen = Screen::MENU;
 
 	clear();
 	attron(A_BOLD);
@@ -124,7 +125,7 @@ void UI::menu() {
 }
 
 void UI::registers() {
-	m_screen = REGS;
+	m_screen = Screen::REGS;
 	
 	clear();
 	
@@ -139,10 +140,10 @@ void UI::registers() {
 }
 
 void UI::trace() {
-	m_screen = TRACE;
+	m_screen = Screen::TRACE;
 	m_next = true;
 
-	int32_t input;
+// 	int32_t input;
 
 	clear();
 	attron(A_BOLD);
@@ -158,7 +159,7 @@ void UI::trace() {
 }
 
 void UI::output() {
-	m_screen = OUTPUT;
+	m_screen = Screen::OUTPUT;
 	clear();
 	attron(A_BOLD);
 	printw("Cinta de salida\n\n");
@@ -171,7 +172,7 @@ void UI::output() {
 }
 
 void UI::input() {
-	m_screen = INPUT;
+	m_screen = Screen::INPUT;
 	clear();
 	attron(A_BOLD);
 	printw("Cinta de entrada\n\n");
@@ -183,7 +184,7 @@ void UI::input() {
 }
 
 void UI::help() {
-	m_screen = HELP;
+	m_screen = Screen::HELP;
 	
 	clear();
 	attron(A_BOLD);
@@ -194,7 +195,7 @@ void UI::help() {
 }
 
 void UI::disassembler() {
-	m_screen = DISASSEMBLER;
+	m_screen = Screen::DISASSEMBLER;
 	
 	clear();
 	
