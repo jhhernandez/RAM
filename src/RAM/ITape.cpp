@@ -42,10 +42,6 @@ ITape::ITape(const std::string& _file) : Tape(_file, ios_base::in) {
 	}
 }
 
-ITape::~ITape() {
-
-}
-
 int32_t ITape::read() {
 	return m_tape[m_position++];
 }
