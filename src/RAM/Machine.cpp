@@ -29,9 +29,13 @@
 
 using namespace std;
 
-Machine::Machine() :
-	m_program(NULL), m_inputTape(NULL), m_outputTape(NULL), m_instructionPointer(0)
+Machine::Machine(const string& _program, const string& _input, const string& _output) :
+	m_program(nullptr), m_inputTape(nullptr), m_outputTape(nullptr)
 {
+	m_program = new Program(_program);
+	m_inputTape = new ITape(_input);
+	m_outputTape = new OTape(_output);
+	
 	m_registers = new Registers;
 }
 
@@ -41,21 +45,6 @@ Machine::~Machine()
 	delete m_inputTape;
 	delete m_outputTape;
 	delete m_registers;
-}
-
-uint32_t Machine::programFile(const char* file)
-{
-	m_program = new Program(file);
-}
-
-uint32_t Machine::inputFile(const char* file)
-{
-	m_inputTape = new ITape(file);
-}
-
-uint32_t Machine::outputFile(const char* file)
-{
-	m_outputTape = new OTape(file);
 }
 
 uint32_t Machine::run()

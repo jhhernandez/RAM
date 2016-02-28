@@ -10,10 +10,7 @@ int main(int argc, char** argv) {
 		cout << "Usage: ram program.ram input.tape output.tape" << endl;
 		return 0;
 	}
-	Machine m;
-	m.programFile(argv[1]);
-	m.inputFile(argv[2]);
-	m.outputFile(argv[3]);
+	Machine m(argv[1], argv[2], argv[3]);
 
 	UI ui(m);
 	ui.run();

@@ -39,11 +39,9 @@ public:
 		OVERFLOW = 0x04,
 	};
 	
-	Machine();
+	Machine(const std::string& _program, const std::string& _input, const std::string& _output);
 	~Machine();
-	uint32_t programFile(const char*);
-	uint32_t inputFile(const char*);
-	uint32_t outputFile(const char*);
+	
 	uint32_t run();
 	void debug();
 

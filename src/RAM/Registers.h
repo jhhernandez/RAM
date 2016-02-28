@@ -33,6 +33,8 @@ public:
 	}
 
 	void setACC(int32_t);
+	
+	// FIXME: -Wreturn-type. throw outofrange
 	int32_t& operator[](uint32_t pos) {
 		if (pos >= 1 && pos < m_size) {
 			return m_register[pos];
