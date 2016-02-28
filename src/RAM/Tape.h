@@ -35,7 +35,7 @@ private:
 
 class Tape {
 public:
-	Tape(const char*, std::ios_base::openmode);
+	Tape(const std::string& _file, std::ios_base::openmode);
 	virtual ~Tape() = 0;
 	void left();
 	void right();

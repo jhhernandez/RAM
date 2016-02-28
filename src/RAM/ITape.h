@@ -24,7 +24,7 @@
 
 class ITape : public Tape {
 public:
-	ITape(const char*);
+	ITape(const std::string& _file);
 	~ITape();
 	int32_t read();
 private:

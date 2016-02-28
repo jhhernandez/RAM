@@ -33,7 +33,7 @@ const char* FileNotFoundException::what() noexcept
 	return tmp.c_str();
 }
 
-Tape::Tape(const char* file, ios_base::openmode mode) : m_file(file), m_position(0) {
+Tape::Tape(const std::string& _file, ios_base::openmode mode) : m_file(_file), m_position(0) {
 }
 
 Tape::~Tape() {

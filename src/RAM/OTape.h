@@ -24,7 +24,7 @@
 
 class OTape : public Tape {
 public:
-	OTape(const char*);
+	OTape(const std::string& _file);
 	~OTape();
 	void write(int32_t);
 	void save();

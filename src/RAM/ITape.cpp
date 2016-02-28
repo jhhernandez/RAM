@@ -24,8 +24,8 @@
 
 using namespace std;
 
-ITape::ITape(const char* file) : Tape(file, ios_base::in) {
-	fstream ifs(file);
+ITape::ITape(const std::string& _file) : Tape(_file, ios_base::in) {
+	fstream ifs(_file);
 	string str;
 	int32_t tmp;
 	
@@ -38,7 +38,7 @@ ITape::ITape(const char* file) : Tape(file, ios_base::in) {
 		}
 		ifs.close();
 	} else {
-		throw new FileNotFoundException(file);
+		throw new FileNotFoundException(_file.c_str());
 	}
 }
 

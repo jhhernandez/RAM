@@ -22,7 +22,7 @@
 
 using namespace std;
 
-OTape::OTape(const char* file) : Tape(file, ios_base::out)
+OTape::OTape(const std::string& _file) : Tape(_file, ios_base::out)
 {
 }
 
