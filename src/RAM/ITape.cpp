@@ -20,11 +20,15 @@
 #include "ITape.h"
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
-using namespace std;
+using std::string;
+using std::fstream;
+using std::stringstream;
+using std::ios_base;
+using std::getline;
 
-ITape::ITape(const std::string& _file) : Tape(_file, ios_base::in) {
+
+ITape::ITape(const string& _file) : Tape(_file, ios_base::in) {
 	fstream ifs(_file);
 	string str;
 	int32_t tmp;

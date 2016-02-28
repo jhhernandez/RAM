@@ -23,7 +23,7 @@
 #include <vector>
 #include <ios>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 class FileNotFoundException : public std::exception {
 public:

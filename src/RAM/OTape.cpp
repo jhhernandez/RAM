@@ -20,9 +20,11 @@
 #include "OTape.h"
 #include <fstream>
 
-using namespace std;
+using std::string;
+using std::fstream;
+using std::ios_base;
 
-OTape::OTape(const std::string& _file) : Tape(_file, ios_base::out)
+OTape::OTape(const string& _file) : Tape(_file, ios_base::out)
 {
 }
 
@@ -37,10 +39,9 @@ void OTape::save()
 	fstream ofs(m_file.c_str());
 
 	for (auto it : m_tape) {
-		ofs << it << endl;
+		ofs << it << "\n";
 	}
 
 	ofs.flush();
 	ofs.close();
-
 }
