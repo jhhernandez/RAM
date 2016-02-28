@@ -38,7 +38,7 @@ void OTape::save()
 {
 	fstream ofs(m_file.c_str());
 
-	for (auto it : m_tape) {
+	for (const auto& it : m_tape) {
 		ofs << it << "\n";
 	}
 
