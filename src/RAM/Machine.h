@@ -27,11 +27,6 @@
 #include "ITape.h"
 #include "OTape.h"
 
-class Program;
-class Registers;
-class ITape;
-class OTape;
-
 class Machine {
 public:
 	enum IDT {

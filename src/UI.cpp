@@ -6,7 +6,7 @@
 using namespace std;
 
 //FIXME: remove the evil const_cast
-UI::UI(const Machine& machine) : m_machine(const_cast<Machine*>(&machine)), m_screen(Screen::MENU), m_running(false) {
+UI::UI(Machine& machine) : m_machine(machine), m_screen(Screen::MENU), m_running(false) {
 	initscr();
 	raw();
 	keypad(stdscr, TRUE);
@@ -31,7 +31,7 @@ void UI::run() {
 				trace();
 				break;
 			case Screen::EXECUTE:
-				m_machine->run();
+				m_machine.run();
 				break;
 			case Screen::DISASSEMBLER:
 				disassembler();
@@ -65,7 +65,7 @@ void UI::event(int32_t ev) {
 			break;
 
 		case static_cast<int32_t>('g'):
-			m_machine->run();
+			m_machine.run();
 			break;
 
 		case static_cast<int32_t>('s'):
@@ -134,7 +134,7 @@ void UI::registers() {
 	attroff(A_BOLD);
 	
 	int i = 0;
-	for (auto it : m_machine->showRegisters()) {
+	for (const auto& it : m_machine.showRegisters()) {
 		printw("R[%d] = %d\n", i++, it);
 	}
 }
@@ -143,17 +143,15 @@ void UI::trace() {
 	m_screen = Screen::TRACE;
 	m_next = true;
 
-// 	int32_t input;
-
 	clear();
 	attron(A_BOLD);
 	printw("Traza\n\n");
 	attroff(A_BOLD);
 
-	m_machine->debug();
+	m_machine.debug();
 	
 	while (m_next) {
-		m_machine->step();
+		m_machine.step();
 		event(getch());
 	}
 }
@@ -165,7 +163,7 @@ void UI::output() {
 	printw("Cinta de salida\n\n");
 	attroff(A_BOLD);
 	
-	for (auto it : m_machine->showOutputTape())
+	for (const auto& it : m_machine.showOutputTape())
 	{
 		printw("%d\n", it);
 	}
@@ -178,7 +176,7 @@ void UI::input() {
 	printw("Cinta de entrada\n\n");
 	attroff(A_BOLD);
 	
-	for (auto it : m_machine->showInputTape()) {
+	for (const auto& it : m_machine.showInputTape()) {
 		printw("%d\n", it);
 	}
 }
@@ -200,10 +198,10 @@ void UI::disassembler() {
 	clear();
 	
 	int i = 0;
-	for (auto it : m_machine->showProgram()) {
+	for (auto it : m_machine.showProgram()) {
 		printw("I[%d] ", i++);
-		for (auto itt : it) {
-			printw("%s ", itt.str().c_str());
+		for (const auto& jt : it) {
+			printw("%s ", jt.str().c_str());
 		}
 		printw("\n");
 	}

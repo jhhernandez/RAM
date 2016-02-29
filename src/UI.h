@@ -7,7 +7,7 @@ class Machine;
 
 class UI {
 public:
-	UI(const Machine&);
+	UI(Machine&);
 	~UI();
 	void run();
 
@@ -23,7 +23,7 @@ private:
 		HELP
 	};
 	
-	Machine* m_machine;
+	Machine& m_machine;
 
 	Screen m_screen;
 	bool m_running;
