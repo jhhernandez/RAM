@@ -40,25 +40,24 @@ public:
 	};
 	
 	Machine(const std::string& _program, const std::string& _input, const std::string& _output);
-	~Machine();
 	
 	uint32_t run();
 	void debug();
 
 	const std::vector<int32_t>& showRegisters() {
-		return m_registers->show();
+		return m_registers.show();
 	}
 
 	const std::vector<std::vector<StringSymbol>>& showProgram() {
-		return m_program->programCode();
+		return m_program.programCode();
 	}
 	
 	const std::vector<std::pair<OPCode, int32_t>>& assembly() {
-		return m_program->program();
+		return m_program.program();
 	}
 	
 	const std::map<std::string, uint32_t>& showLabels() {
-		return m_program->labels();
+		return m_program.labels();
 	}
 	
 	IDT state() {
@@ -66,11 +65,11 @@ public:
 	}
 	
 	const std::vector<int32_t>& showInputTape() {
-		return m_inputTape->show();
+		return m_inputTape.show();
 	}
 	
 	const std::vector<int32_t>& showOutputTape() {
-		return m_outputTape->show();
+		return m_outputTape.show();
 	}
 
 	void step();
@@ -78,10 +77,10 @@ private:
 	static constexpr int32_t OPERAND_UPPER_BOUND = 65536;
 	static constexpr int32_t OPERAND_LOWER_BOUND = -65535;
 
-	Program* m_program;
-	Registers* m_registers;
-	ITape* m_inputTape;
-	OTape* m_outputTape;
+	Program m_program;
+	Registers m_registers;
+	ITape m_inputTape;
+	OTape m_outputTape;
 	uint32_t m_instructionPointer;
 	OPCode m_currentOP;
 	IDT m_machineState;
