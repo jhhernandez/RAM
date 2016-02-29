@@ -34,22 +34,32 @@ private:
 };
 
 class Tape {
+private:
+	using vector_t = std::vector<int32_t>;
+
 public:
+	using size_t = vector_t::size_type;
+	using value_t = int32_t;
+
 	Tape(const std::string& _file, std::ios_base::openmode);
 	virtual ~Tape() = 0;
 	void left();
 	void right();
-	const std::vector<int32_t>& show() {
+	const vector_t& show() {
 		return m_tape;
+	}
+	
+	int32_t operator[](size_t _i) {
+		return m_tape[_i];
 	}
 
 protected:
 	std::string m_file;
-	std::vector<int32_t> m_tape;
-	uint32_t m_position;
+	vector_t m_tape;
+	size_t m_position;
 
-	int32_t read();
-	void write(int32_t);
+	value_t read();
+	void write(value_t);
 };
 
 #endif // TAPE_H
