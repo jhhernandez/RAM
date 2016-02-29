@@ -25,9 +25,9 @@
 class ITape : public Tape {
 public:
 	ITape(const std::string& _file);
-	int32_t read();
+	value_t read();
 private:
-	void write(int32_t);
+	void write(value_t);
 };
 
 #endif // ITAPE_H

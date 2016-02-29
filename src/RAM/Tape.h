@@ -27,10 +27,10 @@
 
 class FileNotFoundException : public std::exception {
 public:
-	FileNotFoundException(const char* path);
+	FileNotFoundException(const std::string& path);
 	const char* what() noexcept;
 private:
-	const char* m_path;
+	std::string m_path;
 };
 
 class Tape {

@@ -22,17 +22,13 @@
 using std::string;
 using std::ios_base;
 
-FileNotFoundException::FileNotFoundException(const char* path) : m_path(path) {
+FileNotFoundException::FileNotFoundException(const std::string& path) : m_path(path) {
 	
 }
 
-// FIXME: marked as noexcept but string construction could throw
 const char* FileNotFoundException::what() noexcept
 {
-	string tmp = "File ";
-	tmp += m_path;
-	tmp += " not found.";
-	return tmp.c_str();
+	return m_path.c_str();
 }
 
 Tape::Tape(const string& _file, ios_base::openmode mode) : m_file(_file), m_position(0) {

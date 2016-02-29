@@ -28,7 +28,7 @@ OTape::OTape(const string& _file) : Tape(_file, ios_base::out)
 {
 }
 
-void OTape::write(int32_t val)
+void OTape::write(value_t val)
 {
 	m_tape.push_back(val);
 	right();
@@ -36,7 +36,7 @@ void OTape::write(int32_t val)
 
 void OTape::save()
 {
-	fstream ofs(m_file.c_str());
+	fstream ofs(m_file);
 
 	for (const auto& it : m_tape) {
 		ofs << it << "\n";

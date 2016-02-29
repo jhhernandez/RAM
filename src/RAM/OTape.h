@@ -25,10 +25,10 @@
 class OTape : public Tape {
 public:
 	OTape(const std::string& _file);
-	void write(int32_t);
+	void write(value_t);
 	void save();
 private:
-	int32_t read();
+	value_t read();
 };
 
 #endif // OTAPE_H

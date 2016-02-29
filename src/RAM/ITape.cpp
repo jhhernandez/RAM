@@ -31,7 +31,7 @@ using std::getline;
 ITape::ITape(const string& _file) : Tape(_file, ios_base::in) {
 	fstream ifs(_file);
 	string str;
-	int32_t tmp;
+	value_t tmp;
 	
 	if (ifs.is_open() && ifs.good()) {
 		while (!ifs.eof()) {
@@ -42,10 +42,10 @@ ITape::ITape(const string& _file) : Tape(_file, ios_base::in) {
 		}
 		ifs.close();
 	} else {
-		throw new FileNotFoundException(_file.c_str());
+		throw new FileNotFoundException(_file);
 	}
 }
 
-int32_t ITape::read() {
+ITape::value_t ITape::read() {
 	return m_tape[m_position++];
 }
