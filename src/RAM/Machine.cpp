@@ -27,7 +27,7 @@
 #include <iostream>
 #include <curses.h>
 
-using namespace std;
+using std::string;
 
 Machine::Machine(const string& _program, const string& _input, const string& _output) :
 	m_program(_program), m_inputTape(_input), m_outputTape(_output)

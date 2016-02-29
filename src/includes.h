@@ -60,7 +60,7 @@ constexpr auto BRANCH = OPCode::JUMP;
 std::string symToString(Symbol _sym);
 
 OPCode operator&(OPCode _code, OPMask _mask);
-unsigned char operator|(OPCode _a, OPCode _b);
+OPCode operator|(OPCode _a, OPCode _b);
 
 
 #endif

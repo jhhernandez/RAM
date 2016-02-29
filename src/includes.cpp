@@ -69,7 +69,7 @@ OPCode operator&(OPCode _code, OPMask _mask)
 	return static_cast<OPCode>(static_cast<unsigned char>(_code) & static_cast<unsigned char>(_mask));
 }
 
-unsigned char operator|(OPCode _a, OPCode _b)
+OPCode operator|(OPCode _a, OPCode _b)
 {
-	return static_cast<unsigned char>(_a) | static_cast<unsigned char>(_b);
+	return static_cast<OPCode>(static_cast<unsigned char>(_a) | static_cast<unsigned char>(_b));
 }
