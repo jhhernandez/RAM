@@ -33,9 +33,16 @@ ITape::ITape(const string& _file) : Tape(_file, ios_base::in) {
 	string str;
 	value_t tmp;
 	
-	if (ifs.is_open() && ifs.good()) {
+	if (ifs) {
 		while (!ifs.eof()) {
 			getline(ifs, str);
+			// if the last line in the input file is empty
+			// str still has the value of the previous iteration
+			// and so it will push it twice
+			if (str.empty()) {
+				continue;
+			}
+			
 			stringstream ss(str);
 			ss >> tmp;
 			m_tape.push_back(tmp);
